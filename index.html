@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Nemčina">
+<title>Nemčina A1+A2 — Kartičky</title>
+<style>
+:root {
+  --der: #E24B4A;
+  --die: #1D9E75;
+  --das: #BA7517;
+  --bg: #f5f4f0;
+  --card-bg: #ffffff;
+  --text: #1a1a18;
+  --muted: #888780;
+  --border: #e0ddd6;
+  --accent: #378ADD;
+  --accent-bg: #E6F1FB;
+  --success: #1D9E75;
+  --success-bg: #E1F5EE;
+  --danger: #E24B4A;
+  --danger-bg: #FCEBEB;
+  --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  padding-bottom: 32px;
+}
+
+/* Header */
+.header {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.app-title { font-size: 17px; font-weight: 600; }
+.app-sub { font-size: 13px; color: var(--muted); }
+
+/* Top controls */
+.top-controls {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+select {
+  flex: 1;
+  min-width: 120px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 14px;
+  padding: 0 10px;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+.load-btn {
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.load-btn:disabled { opacity: 0.6; }
+
+/* Progress bar */
+.prog-wrap { width: 100%; max-width: 480px; margin-bottom: 6px; }
+.prog-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
+.prog-label { font-size: 12px; color: var(--muted); margin-top: 4px; text-align: center; min-height: 16px; }
+
+/* Stats bar */
+.stats-bar {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+.stat-pill {
+  flex: 1;
+  text-align: center;
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.stat-pill.total { background: #f0efe9; color: var(--muted); }
+.stat-pill.good { background: var(--success-bg); color: var(--success); }
+.stat-pill.bad { background: var(--danger-bg); color: var(--danger); }
+.stat-pill span { display: block; font-size: 18px; font-weight: 700; }
+
+/* Card scene */
+.scene {
+  width: 100%;
+  max-width: 480px;
+  height: 260px;
+  perspective: 1000px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.card-3d {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+}
+.card-3d.flipped { transform: rotateY(180deg); }
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  user-select: none;
+}
+.card-back { transform: rotateY(180deg); }
+
+/* Front face content */
+.card-level {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.a1-badge { background: #E6F1FB; color: #185FA5; }
+.a2-badge { background: #EAF3DE; color: #3B6D11; }
+.card-cat {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.card-article {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.art-der { color: var(--der); }
+.art-die { color: var(--die); }
+.art-das { color: var(--das); }
+.card-word {
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.card-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* Back face */
+.card-translation {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.card-german-small {
+  font-size: 16px;
+  color: var(--muted);
+}
+
+/* Action buttons */
+.action-row {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.action-btn {
+  flex: 1;
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.1s, opacity 0.1s;
+}
+.action-btn:active { transform: scale(0.97); opacity: 0.85; }
+.btn-bad { background: var(--danger-bg); color: var(--danger); }
+.btn-good { background: var(--success-bg); color: var(--success); }
+.btn-skip {
+  flex: 0.4;
+  background: #f0efe9;
+  color: var(--muted);
+  font-size: 14px;
+}
+.action-row.hidden { visibility: hidden; }
+
+/* Flip hint */
+.flip-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Nav row */
+.nav-row {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.nav-btn {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+}
+.nav-btn:hover { background: var(--bg); }
+.card-counter {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+}
+.audio-btn {
+  height: 38px;
+  width: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--accent);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Session done */
+.done-screen {
+  display: none;
+  width: 100%;
+  max-width: 480px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+}
+.done-screen.visible { display: block; }
+.done-icon { font-size: 48px; margin-bottom: 12px; }
+.done-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.done-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+.done-stats { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
+.done-stat { padding: 12px 20px; border-radius: 12px; }
+.done-stat span { display: block; font-size: 28px; font-weight: 700; }
+.done-stat small { font-size: 12px; }
+.restart-btn {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.repeat-btn {
+  width: 100%;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* Cat loader */
+.cat-section {
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 12px;
+}
+.cat-section-title { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.cat-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.cat-pill {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card-bg);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text);
+}
+.cat-pill.done { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+.cat-pill.loading { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="app-title">🇩🇪 Nemčina — Kartičky</div>
+    <div class="app-sub">A1 + A2 · AI generátor</div>
+  </div>
+</div>
+
+<div class="top-controls">
+  <select id="selLvl">
+    <option value="all">A1 + A2</option>
+    <option value="A1">Len A1</option>
+    <option value="A2">Len A2</option>
+  </select>
+  <select id="selMode">
+    <option value="all">Všetky kartičky</option>
+    <option value="wrong">Len chybné</option>
+    <option value="unseen">Neprezreté</option>
+  </select>
+  <button class="load-btn" id="btnLoadAll">⬇ Načítať slovíčka</button>
+</div>
+
+<div class="cat-section">
+  <div class="cat-section-title">Kategórie — klikni pre načítanie jednej:</div>
+  <div class="cat-pills" id="catPills"></div>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="prog-label" id="progLabel">Načítaj slovíčka tlačidlom vyššie</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-pill total"><span id="stTotal">0</span>celkom</div>
+  <div class="stat-pill good"><span id="stGood">0</span>✓ viem</div>
+  <div class="stat-pill bad"><span id="stBad">0</span>✗ neviem</div>
+</div>
+
+<div class="scene" id="scene">
+  <div class="card-3d" id="card3d">
+    <div class="card-face card-front">
+      <div class="card-cat" id="fCat">—</div>
+      <div class="card-level a1-badge" id="fLvl">A1</div>
+      <div class="card-article art-der" id="fArt"></div>
+      <div class="card-word" id="fWord">Načítaj slovíčka</div>
+      <div class="card-hint">ťukni pre preklad</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-translation" id="bTr">—</div>
+      <div class="card-german-small" id="bWord">—</div>
+    </div>
+  </div>
+</div>
+
+<div class="flip-hint" id="flipHint">ťukni na kartičku pre preklad</div>
+
+<div class="action-row hidden" id="actionRow">
+  <button class="action-btn btn-bad" id="btnBad">✗ Neviem</button>
+  <button class="action-btn btn-skip" id="btnSkip">→</button>
+  <button class="action-btn btn-good" id="btnGood">✓ Viem</button>
+</div>
+
+<div class="nav-row">
+  <button class="nav-btn" id="btnPrev">← Späť</button>
+  <div class="card-counter" id="cardCounter">0 / 0</div>
+  <button class="audio-btn" id="btnAudio" title="Prehrať">🔊</button>
+  <button class="nav-btn" id="btnNext">Ďalej →</button>
+</div>
+
+<div class="done-screen" id="doneScreen">
+  <div class="done-icon">🎉</div>
+  <div class="done-title">Séria dokončená!</div>
+  <div class="done-sub" id="doneSub">—</div>
+  <div class="done-stats">
+    <div class="done-stat" style="background:var(--success-bg);color:var(--success)">
+      <span id="dGood">0</span><small>Viem</small>
+    </div>
+    <div class="done-stat" style="background:var(--danger-bg);color:var(--danger)">
+      <span id="dBad">0</span><small>Neviem</small>
+    </div>
+  </div>
+  <button class="restart-btn" id="btnRestart">Začať znova (všetky)</button>
+  <button class="repeat-btn" id="btnRepeatWrong">Opakovať chybné</button>
+</div>
+
+<script>
+const CATS = [
+  {id:"rodina",label:"Rodina",prompt:"Rodina a príbuzní"},
+  {id:"byvanie",label:"Bývanie",prompt:"Dom, byt, izby, nábytok, zariadenie"},
+  {id:"jedlo",label:"Jedlo",prompt:"Jedlo, nápoje, ingrediencie, pokrmy, reštaurácia"},
+  {id:"cas",label:"Čas",prompt:"Čas, dni, mesiace, ročné obdobia, dátumy"},
+  {id:"skola",label:"Škola",prompt:"Škola, vzdelávanie, učebné pomôcky, predmety"},
+  {id:"praca",label:"Práca",prompt:"Povolania, pracovisko, pracovné pomôcky, kancelária"},
+  {id:"doprava",label:"Doprava",prompt:"Dopravné prostriedky, cesty, stanice, smer"},
+  {id:"mesto",label:"Mesto",prompt:"Budovy, obchody, verejné miesta v meste, inštitúcie"},
+  {id:"zdravie",label:"Zdravie",prompt:"Časti tela, zdravie, choroby, lekár, lieky"},
+  {id:"oblecenie",label:"Oblečenie",prompt:"Oblečenie, obuv, doplnky, móda"},
+  {id:"priroda",label:"Príroda",prompt:"Počasie, krajina, zvieratá, rastliny, príroda"},
+  {id:"technologia",label:"Tech",prompt:"Elektronika, internet, komunikácia, prístroje"},
+  {id:"nakupovanie",label:"Nákupy",prompt:"Obchod, peniaze, platenie, ceny, produkty"},
+  {id:"volny_cas",label:"Voľný čas",prompt:"Záľuby, šport, kultúra, cestovanie, zábava"},
+  {id:"pocity",label:"Pocity",prompt:"Emócie, pocity, vlastnosti ľudí, charakter, nálady"},
+  {id:"osobne",label:"Osobné",prompt:"Osobné údaje, rodina, vzťahy, identita, bydlisko"},
+  {id:"farby_cisla",label:"Farby a čísla",prompt:"Farby, čísla 0-1000, poradia, množstvá"},
+  {id:"slovesa_zakladne",label:"Slovesá zákl.",prompt:"Najdôležitejšie základné slovesá A1-A2 (min. 80 slovies)"},
+  {id:"slovesa_pohyb",label:"Slovesá pohyb",prompt:"Slovesá pohybu, smeru, cestovania, premiestňovania"},
+  {id:"slovesa_kazdy",label:"Slovesá každodenné",prompt:"Bežné každodenné slovesá, rutina, domáce aktivity"},
+  {id:"pridavne",label:"Prídavné mená",prompt:"Prídavné mená – popis vecí, ľudí, situácií, prostredí"},
+  {id:"prislovky",label:"Príslovky",prompt:"Príslovky miesta, času, spôsobu a základné predložky"},
+  {id:"zakladne_frazy",label:"Frázy",prompt:"Pozdravy, zdvorilosť, základné konverzačné frázy"},
+  {id:"otazky",label:"Otázky",prompt:"Opytovacie slová a ich použitie v nemčine"},
+];
+
+let allWords = [];
+let deck = [];
+let currentIdx = 0;
+let flipped = false;
+let goodIds = new Set();
+let badIds = new Set();
+let seenIds = new Set();
+let catStatus = {};
+
+function getArtClass(w) {
+  if (!w) return "";
+  const lw = w.toLowerCase();
+  if (lw.startsWith("der ")) return "art-der";
+  if (lw.startsWith("die ")) return "art-die";
+  if (lw.startsWith("das ")) return "art-das";
+  return "";
+}
+function getArtLabel(w) {
+  if (!w) return "";
+  const lw = w.toLowerCase();
+  if (lw.startsWith("der ")) return "der";
+  if (lw.startsWith("die ")) return "die";
+  if (lw.startsWith("das ")) return "das";
+  return "";
+}
+function getWordPart(w) {
+  if (!w) return w;
+  return /^(der|die|das) /i.test(w) ? w.substring(4) : w;
+}
+
+function renderCatPills() {
+  const container = document.getElementById("catPills");
+  container.innerHTML = "";
+  CATS.forEach(c => {
+    const pill = document.createElement("button");
+    pill.className = "cat-pill" + (catStatus[c.id] === "done" ? " done" : catStatus[c.id] === "loading" ? " loading" : "");
+    pill.textContent = (catStatus[c.id] === "done" ? "✓ " : catStatus[c.id] === "loading" ? "⏳ " : "") + c.label;
+    pill.addEventListener("click", () => loadCat(c));
+    container.appendChild(pill);
+  });
+}
+
+async function loadCat(cat) {
+  if (catStatus[cat.id] === "loading" || catStatus[cat.id] === "done") return;
+  catStatus[cat.id] = "loading";
+  renderCatPills();
+  document.getElementById("progLabel").textContent = "Generujem: " + cat.label + "...";
+
+  const sys = `Si expert na nemčinu. Vygeneruj kompletný zoznam slovíčok pre danú tematickú skupinu na úrovniach A1 a A2 podľa CEFR.
+Vráť VÝHRADNE JSON pole bez akéhokoľvek iného textu, bez markdown, bez backtick.
+Každý objekt má polia:
+- "w": nemecké slovo (podstatné mená VŽDY s členom: der/die/das, napr. "der Hund"; slovesá v infinitíve; ostatné bez člena)
+- "tr": slovenský preklad (stručný, 1-4 slová)
+- "lvl": "A1" alebo "A2"
+Zahrň min. 70, ideálne 90-120 slov. Žiadne duplikáty.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        system: sys,
+        messages: [{ role: "user", content: "Kategória: " + cat.prompt }]
+      })
+    });
+    const data = await res.json();
+    const txt = data.content.map(i => i.text || "").join("").trim().replace(/```json|```/g, "").trim();
+    let words = JSON.parse(txt);
+    words = words.map((w, i) => ({ ...w, cat: cat.label, id: cat.id + "_" + i }));
+    allWords = [...allWords, ...words];
+    catStatus[cat.id] = "done";
+    document.getElementById("progLabel").textContent = "✓ " + cat.label + " (" + words.length + " slov)";
+  } catch (e) {
+    catStatus[cat.id] = "idle";
+    document.getElementById("progLabel").textContent = "Chyba: " + cat.label + " — skús znova";
+  }
+  renderCatPills();
+  updateProgress();
+  rebuildDeck();
+}
+
+function updateProgress() {
+  const done = Object.values(catStatus).filter(v => v === "done").length;
+  const pct = Math.round(done / CATS.length * 100);
+  document.getElementById("progFill").style.width = pct + "%";
+}
+
+async function loadAll() {
+  const btn = document.getElementById("btnLoadAll");
+  btn.disabled = true;
+  btn.textContent = "Načítavam...";
+  for (const cat of CATS) {
+    if (catStatus[cat.id] !== "done") {
+      await loadCat(cat);
+      await new Promise(r => setTimeout(r, 350));
+    }
+  }
+  btn.textContent = "✓ Načítané";
+}
+
+function rebuildDeck() {
+  const lvl = document.getElementById("selLvl").value;
+  const mode = document.getElementById("selMode").value;
+  let source = allWords;
+  if (lvl !== "all") source = source.filter(w => w.lvl === lvl);
+  if (mode === "wrong") source = source.filter(w => badIds.has(w.id));
+  else if (mode === "unseen") source = source.filter(w => !seenIds.has(w.id));
+  deck = shuffle([...source]);
+  currentIdx = 0;
+  flipped = false;
+  document.getElementById("doneScreen").classList.remove("visible");
+  showCard();
+  updateStats();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function showCard() {
+  if (deck.length === 0) {
+    document.getElementById("fWord").textContent = "Načítaj slovíčka";
+    document.getElementById("fArt").textContent = "";
+    document.getElementById("fCat").textContent = "—";
+    document.getElementById("cardCounter").textContent = "0 / 0";
+    return;
+  }
+  if (currentIdx >= deck.length) { showDone(); return; }
+
+  const item = deck[currentIdx];
+  seenIds.add(item.id);
+
+  // front
+  const art = getArtLabel(item.w);
+  const wp = getWordPart(item.w);
+  const artEl = document.getElementById("fArt");
+  artEl.textContent = art;
+  artEl.className = "card-article " + getArtClass(item.w);
+  document.getElementById("fWord").textContent = wp;
+  document.getElementById("fCat").textContent = item.cat || "";
+  const lvlEl = document.getElementById("fLvl");
+  lvlEl.textContent = item.lvl || "";
+  lvlEl.className = "card-level " + (item.lvl === "A1" ? "a1-badge" : "a2-badge");
+
+  // back
+  document.getElementById("bTr").textContent = item.tr || "";
+  document.getElementById("bWord").textContent = item.w || "";
+
+  // reset flip
+  flipped = false;
+  document.getElementById("card3d").classList.remove("flipped");
+  document.getElementById("actionRow").classList.add("hidden");
+  document.getElementById("flipHint").textContent = "ťukni na kartičku pre preklad";
+  document.getElementById("cardCounter").textContent = (currentIdx + 1) + " / " + deck.length;
+}
+
+function flipCard() {
+  flipped = !flipped;
+  document.getElementById("card3d").classList.toggle("flipped", flipped);
+  if (flipped) {
+    document.getElementById("actionRow").classList.remove("hidden");
+    document.getElementById("flipHint").textContent = "Vedel/a si to?";
+    speakCurrent();
+  } else {
+    document.getElementById("actionRow").classList.add("hidden");
+    document.getElementById("flipHint").textContent = "ťukni na kartičku pre preklad";
+  }
+}
+
+function markGood() {
+  const item = deck[currentIdx];
+  if (item) { goodIds.add(item.id); badIds.delete(item.id); }
+  updateStats();
+  nextCard();
+}
+function markBad() {
+  const item = deck[currentIdx];
+  if (item) { badIds.add(item.id); goodIds.delete(item.id); }
+  updateStats();
+  nextCard();
+}
+function nextCard() {
+  currentIdx++;
+  if (currentIdx >= deck.length) { showDone(); return; }
+  showCard();
+}
+function prevCard() {
+  if (currentIdx > 0) { currentIdx--; showCard(); }
+}
+
+function updateStats() {
+  document.getElementById("stTotal").textContent = allWords.length;
+  document.getElementById("stGood").textContent = goodIds.size;
+  document.getElementById("stBad").textContent = badIds.size;
+}
+
+function showDone() {
+  document.getElementById("doneScreen").classList.add("visible");
+  document.getElementById("dGood").textContent = goodIds.size;
+  document.getElementById("dBad").textContent = badIds.size;
+  const pct = deck.length > 0 ? Math.round(goodIds.size / deck.length * 100) : 0;
+  document.getElementById("doneSub").textContent =
+    "Správne: " + goodIds.size + " z " + deck.length + " (" + pct + "%)";
+}
+
+function speakCurrent() {
+  if (!window.speechSynthesis || !deck[currentIdx]) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(deck[currentIdx].w);
+  u.lang = "de-DE";
+  u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+
+// Events
+document.getElementById("scene").addEventListener("click", flipCard);
+document.getElementById("btnGood").addEventListener("click", markGood);
+document.getElementById("btnBad").addEventListener("click", markBad);
+document.getElementById("btnSkip").addEventListener("click", () => { currentIdx++; if (currentIdx >= deck.length) showDone(); else showCard(); });
+document.getElementById("btnNext").addEventListener("click", () => { if (!flipped) { flipCard(); } else { nextCard(); } });
+document.getElementById("btnPrev").addEventListener("click", prevCard);
+document.getElementById("btnAudio").addEventListener("click", speakCurrent);
+document.getElementById("btnLoadAll").addEventListener("click", loadAll);
+document.getElementById("btnRestart").addEventListener("click", () => { goodIds.clear(); badIds.clear(); seenIds.clear(); rebuildDeck(); });
+document.getElementById("btnRepeatWrong").addEventListener("click", () => {
+  document.getElementById("selMode").value = "wrong";
+  goodIds.clear();
+  rebuildDeck();
+});
+document.getElementById("selLvl").addEventListener("change", rebuildDeck);
+document.getElementById("selMode").addEventListener("change", rebuildDeck);
+
+// Swipe
+let touchStartX = 0;
+document.getElementById("scene").addEventListener("touchstart", e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.getElementById("scene").addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 60) {
+    if (dx > 0) prevCard();
+    else { if (!flipped) flipCard(); else nextCard(); }
+  }
+}, {passive: true});
+
+// Keyboard
+document.addEventListener("keydown", e => {
+  if (e.key === " " || e.key === "Enter") { e.preventDefault(); flipCard(); }
+  if (e.key === "ArrowRight") { if (!flipped) flipCard(); else nextCard(); }
+  if (e.key === "ArrowLeft") prevCard();
+  if (e.key === "g" || e.key === "1") markGood();
+  if (e.key === "b" || e.key === "2") markBad();
+});
+
+renderCatPills();
+showCard();
+</script>
+</body>
+</html>
