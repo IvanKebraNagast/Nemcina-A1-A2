@@ -553,11 +553,7 @@ function loadVoices() {
 window.speechSynthesis.onvoiceschanged = loadVoices;
 loadVoices();
 
-function getVoice(lang) {
-  const all = window.speechSynthesis.getVoices();
-  return all.find(v => v.lang.startsWith(lang) && v.localService) ||
-         all.find(v => v.lang.startsWith(lang)) || null;
-}
+// getVoice replaced by getBestVoice above
 
 function artLabel(w) {
   const l = w.toLowerCase();
@@ -630,21 +626,56 @@ function updateMiniList(i) {
   if (pills[i]) pills[i].scrollIntoView({ block: "nearest", inline: "center" });
 }
 
-// SPEECH
+// SPEECH — fixed for Windows/Chrome slow TTS bug
+// Windows TTS ignores rate above ~1.0, so we use workaround with resume() pinging
+let resumeTimer = null;
+
+function startResumePing() {
+  // Chrome Windows bug: synthesis pauses silently — keep it alive
+  stopResumePing();
+  resumeTimer = setInterval(() => {
+    if (window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+      window.speechSynthesis.pause();
+      window.speechSynthesis.resume();
+    }
+  }, 5000);
+}
+function stopResumePing() {
+  if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
+}
+
+function getBestVoice(lang) {
+  const all = window.speechSynthesis.getVoices();
+  const pref = lang === "de-DE"
+    ? ["Google Deutsch", "Microsoft Katja", "Microsoft Stefan", "Anna", "Helena"]
+    : ["Google slovenčina", "Microsoft Radka", "Lucia"];
+  for (const name of pref) {
+    const v = all.find(v => v.name.includes(name));
+    if (v) return v;
+  }
+  return all.find(v => v.lang.startsWith(lang.substring(0,2))) || null;
+}
+
 function speak(text, lang, rate, pitch) {
   return new Promise(resolve => {
     if (stopFlag) { resolve(); return; }
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang;
-    u.rate = rate;
-    u.pitch = pitch || 1;
-    const v = getVoice(lang === "de-DE" ? "de" : "sk");
-    if (v) u.voice = v;
-    u.onend = resolve;
-    u.onerror = resolve;
-    document.getElementById("speakBar").classList.add("active");
-    window.speechSynthesis.speak(u);
+
+    // Small delay after cancel — needed on Windows
+    setTimeout(() => {
+      if (stopFlag) { resolve(); return; }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      u.rate = Math.min(rate, 1.8); // cap for compatibility
+      u.pitch = pitch || 1;
+      const v = getBestVoice(lang);
+      if (v) u.voice = v;
+      u.onend = () => { resolve(); };
+      u.onerror = () => { resolve(); };
+      document.getElementById("speakBar").classList.add("active");
+      startResumePing();
+      window.speechSynthesis.speak(u);
+    }, 80);
   });
 }
 
@@ -665,28 +696,33 @@ async function playWord(item) {
 
   showWord(cur, false);
 
-  // 1. Speak article slowly and with emphasis
+  // 1. Člen — pomalý, dôrazný
   if (art) {
     await speak(art, "de-DE", artSpeed, 0.8);
-    await delay(120);
+    await delay(100);
   }
 
-  // 2. Speak the word at normal speed
+  if (stopFlag) return;
+
+  // 2. Slovo — normálna rýchlosť
   await speak(wp, "de-DE", speed, 1.0);
-  await delay(300);
+  await delay(200);
 
-  // 3. Repeat full word with article at normal speed
+  if (stopFlag) return;
+
+  // 3. Celé slovíčko s členom — zopakovať
   if (art) {
-    await speak(item.w, "de-DE", speed * 0.95, 1.0);
+    await speak(item.w, "de-DE", speed, 1.0);
   }
 
-  // 4. Show translation after delay
+  // 4. Pauza → zobraz preklad
   await delay(transDelay);
   if (stopFlag) return;
   showWord(cur, true);
 
-  // 5. Speak Slovak translation
-  await speak(item.tr, "sk-SK", speed * 0.95, 1.0);
+  // 5. Slovenský preklad
+  await speak(item.tr, "sk-SK", speed, 1.0);
+  stopResumePing();
   document.getElementById("speakBar").classList.remove("active");
 }
 
