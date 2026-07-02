@@ -88,6 +88,7 @@ select{flex:1;min-width:120px;height:38px;border:1px solid var(--border);border-
 <div class="header">
   <div class="title">🇩🇪 Nemčina — Audio</div>
   <div class="sub" id="subLabel">A1 + A2 · 700 slovíčok</div>
+  <div style="font-size:11px;color:#555;margin-top:6px;cursor:pointer" onclick="debugVoices()">🔍 hlasy v konzole</div>
 </div>
 
 <div class="big-card" id="bigCard">
@@ -626,56 +627,46 @@ function updateMiniList(i) {
   if (pills[i]) pills[i].scrollIntoView({ block: "nearest", inline: "center" });
 }
 
-// SPEECH — fixed for Windows/Chrome slow TTS bug
-// Windows TTS ignores rate above ~1.0, so we use workaround with resume() pinging
-let resumeTimer = null;
+// SPEECH
+let deVoice = null, skVoice = null;
 
-function startResumePing() {
-  // Chrome Windows bug: synthesis pauses silently — keep it alive
-  stopResumePing();
-  resumeTimer = setInterval(() => {
-    if (window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
-      window.speechSynthesis.pause();
-      window.speechSynthesis.resume();
-    }
-  }, 5000);
-}
-function stopResumePing() {
-  if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
-}
-
-function getBestVoice(lang) {
+function initVoices() {
   const all = window.speechSynthesis.getVoices();
-  const pref = lang === "de-DE"
-    ? ["Google Deutsch", "Microsoft Katja", "Microsoft Stefan", "Anna", "Helena"]
-    : ["Google slovenčina", "Microsoft Radka", "Lucia"];
-  for (const name of pref) {
-    const v = all.find(v => v.name.includes(name));
-    if (v) return v;
-  }
-  return all.find(v => v.lang.startsWith(lang.substring(0,2))) || null;
+  if (!all.length) return;
+  // German — prefer Google Deutsch, fallback any de
+  deVoice = all.find(v => v.name.includes("Google") && v.lang.startsWith("de"))
+          || all.find(v => v.lang === "de-DE")
+          || all.find(v => v.lang.startsWith("de"))
+          || null;
+  // Slovak — iOS má "sk-SK", Windows nemá žiadny, Android má Google
+  skVoice = all.find(v => v.name.toLowerCase().includes("google") && v.lang.startsWith("sk"))
+          || all.find(v => v.lang === "sk-SK")
+          || all.find(v => v.lang === "sk")
+          || all.find(v => v.lang.startsWith("sk"))
+          || null;
+  // Debug — zobraz dostupné hlasy v console
+  console.log("DE voice:", deVoice ? deVoice.name + " / " + deVoice.lang : "NONE");
+  console.log("SK voice:", skVoice ? skVoice.name + " / " + skVoice.lang : "NONE");
+  console.log("All voices:", all.map(v => v.name + " / " + v.lang).join(", "));
 }
+window.speechSynthesis.onvoiceschanged = initVoices;
+// iOS Safari: voices available immediately after first call
+initVoices();
+// Retry — niektoré prehliadače načítajú hlasy neskôr
+setTimeout(initVoices, 300);
+setTimeout(initVoices, 1000);
 
-function speak(text, lang, rate, pitch) {
+function speakUtterance(text, voice, lang, rate, pitch) {
   return new Promise(resolve => {
     if (stopFlag) { resolve(); return; }
-    window.speechSynthesis.cancel();
-
-    // Small delay after cancel — needed on Windows
-    setTimeout(() => {
-      if (stopFlag) { resolve(); return; }
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = lang;
-      u.rate = Math.min(rate, 1.8); // cap for compatibility
-      u.pitch = pitch || 1;
-      const v = getBestVoice(lang);
-      if (v) u.voice = v;
-      u.onend = () => { resolve(); };
-      u.onerror = () => { resolve(); };
-      document.getElementById("speakBar").classList.add("active");
-      startResumePing();
-      window.speechSynthesis.speak(u);
-    }, 80);
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = Math.min(rate, 1.6);
+    u.pitch = pitch || 1;
+    if (voice) u.voice = voice;
+    u.onend = () => setTimeout(resolve, 50); // 50ms gap — iOS needs this between utterances
+    u.onerror = () => setTimeout(resolve, 50);
+    window.speechSynthesis.speak(u);
   });
 }
 
@@ -695,34 +686,35 @@ async function playWord(item) {
   const transDelay = parseFloat(document.getElementById("slTransDelay").value) * 1000;
 
   showWord(cur, false);
+  document.getElementById("speakBar").classList.add("active");
 
-  // 1. Člen — pomalý, dôrazný
+  // Queue everything at once — no cancel() between parts, avoids Windows pauses
+  window.speechSynthesis.cancel();
+
+  // 1. Člen — pomalý
   if (art) {
-    await speak(art, "de-DE", artSpeed, 0.8);
-    await delay(100);
+    await speakUtterance(art, deVoice, "de-DE", artSpeed, 0.8);
   }
-
   if (stopFlag) return;
 
-  // 2. Slovo — normálna rýchlosť
-  await speak(wp, "de-DE", speed, 1.0);
-  await delay(200);
-
+  // 2. Slovo
+  await speakUtterance(wp, deVoice, "de-DE", speed, 1.0);
   if (stopFlag) return;
 
-  // 3. Celé slovíčko s členom — zopakovať
+  // 3. Celé znova s členom
   if (art) {
-    await speak(item.w, "de-DE", speed, 1.0);
+    await speakUtterance(item.w, deVoice, "de-DE", speed, 1.0);
   }
+  if (stopFlag) return;
 
-  // 4. Pauza → zobraz preklad
+  // 4. Pauza potom preklad
   await delay(transDelay);
   if (stopFlag) return;
   showWord(cur, true);
 
   // 5. Slovenský preklad
-  await speak(item.tr, "sk-SK", speed, 1.0);
-  stopResumePing();
+  await speakUtterance(item.tr, skVoice, skVoice ? skVoice.lang : "sk-SK", speed, 1.0);
+
   document.getElementById("speakBar").classList.remove("active");
 }
 
@@ -803,6 +795,18 @@ document.addEventListener("keydown", e => {
 });
 
 buildDeck();
+
+function debugVoices() {
+  initVoices();
+  const all = window.speechSynthesis.getVoices();
+  const sk = all.filter(v => v.lang.startsWith("sk"));
+  const de = all.filter(v => v.lang.startsWith("de"));
+  const msg = "SK hlasy: " + (sk.length ? sk.map(v=>v.name).join(", ") : "ŽIADNY")
+            + "\nDE hlasy: " + (de.length ? de.map(v=>v.name).join(", ") : "ŽIADNY")
+            + "\n\nAktívny SK: " + (skVoice ? skVoice.name + " / " + skVoice.lang : "ŽIADNY — preklad nebude hovorený")
+            + "\nAktívny DE: " + (deVoice ? deVoice.name + " / " + deVoice.lang : "ŽIADNY");
+  alert(msg);
+}
 </script>
 </body>
 </html>
