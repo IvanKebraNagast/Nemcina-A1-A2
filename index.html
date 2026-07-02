@@ -2,728 +2,771 @@
 <html lang="sk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Nemčina">
-<title>Nemčina A1+A2 — Kartičky</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nemčina Audio">
+<title>Nemčina A1+A2 — Audio</title>
 <style>
 :root {
-  --der: #E24B4A;
-  --die: #1D9E75;
-  --das: #BA7517;
-  --bg: #f5f4f0;
-  --card-bg: #ffffff;
-  --text: #1a1a18;
-  --muted: #888780;
-  --border: #e0ddd6;
-  --accent: #378ADD;
-  --accent-bg: #E6F1FB;
-  --success: #1D9E75;
-  --success-bg: #E1F5EE;
-  --danger: #E24B4A;
-  --danger-bg: #FCEBEB;
-  --radius: 16px;
+  --der: #E24B4A; --die: #1D9E75; --das: #BA7517;
+  --bg: #141414; --card: #1e1e1e; --card2: #252525;
+  --text: #f0ede6; --muted: #888; --border: #333;
+  --accent: #378ADD; --r: 16px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-  padding-bottom: 32px;
-}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 48px}
 
-/* Header */
-.header {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-.app-title { font-size: 17px; font-weight: 600; }
-.app-sub { font-size: 13px; color: var(--muted); }
+.header{width:100%;max-width:480px;text-align:center;margin-bottom:28px;padding-top:8px}
+.title{font-size:24px;font-weight:700;letter-spacing:-0.3px}
+.sub{font-size:14px;color:var(--muted);margin-top:4px}
 
-/* Top controls */
-.top-controls {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-select {
-  flex: 1;
-  min-width: 120px;
-  height: 38px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card-bg);
-  color: var(--text);
-  font-size: 14px;
-  padding: 0 10px;
-  outline: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  padding-right: 28px;
-}
-.load-btn {
-  height: 38px;
-  padding: 0 16px;
-  border: none;
-  border-radius: 10px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.load-btn:disabled { opacity: 0.6; }
+/* BIG CARD */
+.big-card{width:100%;max-width:480px;background:var(--card);border-radius:24px;padding:32px 24px 28px;margin-bottom:20px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;border:1px solid var(--border)}
 
-/* Progress bar */
-.prog-wrap { width: 100%; max-width: 480px; margin-bottom: 6px; }
-.prog-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.prog-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
-.prog-label { font-size: 12px; color: var(--muted); margin-top: 4px; text-align: center; min-height: 16px; }
+.cat-badge{position:absolute;top:16px;left:18px;font-size:11px;color:var(--muted);font-weight:500}
+.lvl-badge{position:absolute;top:16px;right:18px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+.a1b{background:#1a3a5c;color:#7bb3e0}.a2b{background:#1a3d28;color:#5ec491}
 
-/* Stats bar */
-.stats-bar {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  gap: 8px;
-}
-.stat-pill {
-  flex: 1;
-  text-align: center;
-  padding: 6px 8px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 500;
-}
-.stat-pill.total { background: #f0efe9; color: var(--muted); }
-.stat-pill.good { background: var(--success-bg); color: var(--success); }
-.stat-pill.bad { background: var(--danger-bg); color: var(--danger); }
-.stat-pill span { display: block; font-size: 18px; font-weight: 700; }
+.article-display{font-size:28px;font-weight:800;margin-bottom:4px;transition:all 0.3s;min-height:38px}
+.art-der{color:var(--der)}.art-die{color:var(--die)}.art-das{color:var(--das)}.art-none{color:var(--muted)}
 
-/* Card scene */
-.scene {
-  width: 100%;
-  max-width: 480px;
-  height: 260px;
-  perspective: 1000px;
-  margin-bottom: 20px;
-  cursor: pointer;
-}
-.card-3d {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
-}
-.card-3d.flipped { transform: rotateY(180deg); }
-.card-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  border-radius: var(--radius);
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  text-align: center;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  user-select: none;
-}
-.card-back { transform: rotateY(180deg); }
+.word-display{font-size:44px;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:16px;transition:all 0.3s}
 
-/* Front face content */
-.card-level {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 6px;
-}
-.a1-badge { background: #E6F1FB; color: #185FA5; }
-.a2-badge { background: #EAF3DE; color: #3B6D11; }
-.card-cat {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  font-size: 11px;
-  color: var(--muted);
-}
-.card-article {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.art-der { color: var(--der); }
-.art-die { color: var(--die); }
-.art-das { color: var(--das); }
-.card-word {
-  font-size: 38px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-  margin-bottom: 8px;
-}
-.card-hint {
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 8px;
-}
+.divider{width:40px;height:2px;background:var(--border);border-radius:1px;margin-bottom:16px}
 
-/* Back face */
-.card-translation {
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.card-german-small {
-  font-size: 16px;
-  color: var(--muted);
-}
+.tr-display{font-size:22px;color:var(--muted);font-weight:400;transition:all 0.3s;min-height:32px}
+.tr-display.visible{color:#c8c3ba}
 
-/* Action buttons */
-.action-row {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.action-btn {
-  flex: 1;
-  height: 52px;
-  border: none;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: transform 0.1s, opacity 0.1s;
-}
-.action-btn:active { transform: scale(0.97); opacity: 0.85; }
-.btn-bad { background: var(--danger-bg); color: var(--danger); }
-.btn-good { background: var(--success-bg); color: var(--success); }
-.btn-skip {
-  flex: 0.4;
-  background: #f0efe9;
-  color: var(--muted);
-  font-size: 14px;
-}
-.action-row.hidden { visibility: hidden; }
+/* speaking indicator */
+.speaking-bar{display:flex;gap:4px;align-items:flex-end;height:24px;margin-top:16px;opacity:0;transition:opacity 0.2s}
+.speaking-bar.active{opacity:1}
+.bar{width:4px;border-radius:2px;animation:bounce 0.6s ease-in-out infinite}
+.bar:nth-child(1){background:var(--der);animation-delay:0s}
+.bar:nth-child(2){background:var(--die);animation-delay:0.1s}
+.bar:nth-child(3){background:var(--das);animation-delay:0.2s}
+.bar:nth-child(4){background:var(--accent);animation-delay:0.3s}
+.bar:nth-child(5){background:var(--muted);animation-delay:0.15s}
+@keyframes bounce{0%,100%{height:4px}50%{height:20px}}
 
-/* Flip hint */
-.flip-hint {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 16px;
-  text-align: center;
-}
+/* PROGRESS */
+.progress-wrap{width:100%;max-width:480px;margin-bottom:20px}
+.progress-track{height:4px;background:var(--card2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s}
+.progress-label{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)}
 
-/* Nav row */
-.nav-row {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.nav-btn {
-  height: 38px;
-  padding: 0 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card-bg);
-  color: var(--text);
-  font-size: 14px;
-  cursor: pointer;
-}
-.nav-btn:hover { background: var(--bg); }
-.card-counter {
-  flex: 1;
-  text-align: center;
-  font-size: 14px;
-  color: var(--muted);
-}
-.audio-btn {
-  height: 38px;
-  width: 38px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card-bg);
-  color: var(--accent);
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* CONTROLS */
+.controls{width:100%;max-width:480px;background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:20px;margin-bottom:16px}
 
-/* Session done */
-.done-screen {
-  display: none;
-  width: 100%;
-  max-width: 480px;
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  padding: 32px 24px;
-  text-align: center;
-}
-.done-screen.visible { display: block; }
-.done-icon { font-size: 48px; margin-bottom: 12px; }
-.done-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-.done-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
-.done-stats { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
-.done-stat { padding: 12px 20px; border-radius: 12px; }
-.done-stat span { display: block; font-size: 28px; font-weight: 700; }
-.done-stat small { font-size: 12px; }
-.restart-btn {
-  width: 100%;
-  height: 48px;
-  border: none;
-  border-radius: 12px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 8px;
-}
-.repeat-btn {
-  width: 100%;
-  height: 48px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: transparent;
-  color: var(--text);
-  font-size: 15px;
-  cursor: pointer;
-}
+.play-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px}
+.pbtn{width:52px;height:52px;border:none;border-radius:50%;background:var(--card2);color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+.pbtn:active{transform:scale(0.93)}
+.pbtn.main{width:68px;height:68px;background:var(--accent);color:#fff;font-size:26px;border:none}
+.pbtn.main:active{opacity:0.85}
 
-/* Cat loader */
-.cat-section {
-  width: 100%;
-  max-width: 480px;
-  margin-bottom: 12px;
-}
-.cat-section-title { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-.cat-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-.cat-pill {
-  padding: 5px 12px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: var(--card-bg);
-  font-size: 13px;
-  cursor: pointer;
-  color: var(--text);
-}
-.cat-pill.done { background: var(--success-bg); border-color: var(--success); color: var(--success); }
-.cat-pill.loading { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+.sliders{display:flex;flex-direction:column;gap:14px}
+.slider-row{display:flex;align-items:center;gap:12px}
+.slider-label{font-size:13px;color:var(--muted);width:120px;flex-shrink:0}
+.slider-val{font-size:13px;color:var(--text);width:36px;text-align:right;flex-shrink:0}
+input[type=range]{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:var(--border);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer}
+
+/* FILTERS */
+.filters{width:100%;max-width:480px;display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+select{flex:1;min-width:120px;height:38px;border:1px solid var(--border);border-radius:10px;background:var(--card2);color:var(--text);font-size:14px;padding:0 10px;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+/* MINI LIST */
+.mini-list{width:100%;max-width:480px;display:flex;gap:6px;flex-wrap:wrap;max-height:160px;overflow-y:auto}
+.mini-pill{padding:4px 10px;border-radius:20px;font-size:12px;background:var(--card2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.15s}
+.mini-pill:hover{border-color:var(--accent);color:var(--text)}
+.mini-pill.current{background:var(--accent);color:#fff;border-color:transparent}
+.mini-pill.played{background:var(--card2);color:#555;border-color:#333}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div>
-    <div class="app-title">🇩🇪 Nemčina — Kartičky</div>
-    <div class="app-sub">A1 + A2 · AI generátor</div>
+  <div class="title">🇩🇪 Nemčina — Audio</div>
+  <div class="sub" id="subLabel">A1 + A2 · 700 slovíčok</div>
+</div>
+
+<div class="big-card" id="bigCard">
+  <div class="cat-badge" id="dispCat"></div>
+  <div class="lvl-badge a1b" id="dispLvl">A1</div>
+  <div class="article-display" id="dispArt"></div>
+  <div class="word-display" id="dispWord">Stlač ▶ pre spustenie</div>
+  <div class="divider"></div>
+  <div class="tr-display" id="dispTr">slovenský preklad sa zobrazí po nemeckom slove</div>
+  <div class="speaking-bar" id="speakBar">
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div>
   </div>
 </div>
 
-<div class="top-controls">
-  <select id="selLvl">
-    <option value="all">A1 + A2</option>
-    <option value="A1">Len A1</option>
-    <option value="A2">Len A2</option>
-  </select>
-  <select id="selMode">
-    <option value="all">Všetky kartičky</option>
-    <option value="wrong">Len chybné</option>
-    <option value="unseen">Neprezreté</option>
-  </select>
-  <button class="load-btn" id="btnLoadAll">⬇ Načítať slovíčka</button>
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+  <div class="progress-label"><span id="progCur">0</span><span id="progTot">/ 0</span></div>
 </div>
 
-<div class="cat-section">
-  <div class="cat-section-title">Kategórie — klikni pre načítanie jednej:</div>
-  <div class="cat-pills" id="catPills"></div>
+<div class="filters">
+  <select id="selLvl"><option value="all">A1 + A2</option><option value="A1">Len A1</option><option value="A2">Len A2</option></select>
+  <select id="selCat"><option value="all">Všetky kategórie</option></select>
 </div>
 
-<div class="prog-wrap">
-  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
-  <div class="prog-label" id="progLabel">Načítaj slovíčka tlačidlom vyššie</div>
-</div>
-
-<div class="stats-bar">
-  <div class="stat-pill total"><span id="stTotal">0</span>celkom</div>
-  <div class="stat-pill good"><span id="stGood">0</span>✓ viem</div>
-  <div class="stat-pill bad"><span id="stBad">0</span>✗ neviem</div>
-</div>
-
-<div class="scene" id="scene">
-  <div class="card-3d" id="card3d">
-    <div class="card-face card-front">
-      <div class="card-cat" id="fCat">—</div>
-      <div class="card-level a1-badge" id="fLvl">A1</div>
-      <div class="card-article art-der" id="fArt"></div>
-      <div class="card-word" id="fWord">Načítaj slovíčka</div>
-      <div class="card-hint">ťukni pre preklad</div>
+<div class="controls">
+  <div class="play-row">
+    <button class="pbtn" id="btnPrev" title="Predchádzajúce">⏮</button>
+    <button class="pbtn" id="btnRewind" title="–10">⏪</button>
+    <button class="pbtn main" id="btnPlay">▶</button>
+    <button class="pbtn" id="btnFwd" title="+10">⏩</button>
+    <button class="pbtn" id="btnNext" title="Nasledujúce">⏭</button>
+  </div>
+  <div class="sliders">
+    <div class="slider-row">
+      <span class="slider-label">Rýchlosť reči</span>
+      <input type="range" id="slSpeed" min="0.5" max="1.5" step="0.05" value="0.9">
+      <span class="slider-val" id="valSpeed">0.9×</span>
     </div>
-    <div class="card-face card-back">
-      <div class="card-translation" id="bTr">—</div>
-      <div class="card-german-small" id="bWord">—</div>
+    <div class="slider-row">
+      <span class="slider-label">Člen — dôraz</span>
+      <input type="range" id="slArticle" min="0.3" max="0.8" step="0.05" value="0.5">
+      <span class="slider-val" id="valArticle">0.5×</span>
+    </div>
+    <div class="slider-row">
+      <span class="slider-label">Pauza medzi slovami</span>
+      <input type="range" id="slPause" min="0.5" max="4" step="0.5" value="1.5">
+      <span class="slider-val" id="valPause">1.5s</span>
+    </div>
+    <div class="slider-row">
+      <span class="slider-label">Preklad po nemčine</span>
+      <input type="range" id="slTransDelay" min="0.3" max="2" step="0.1" value="0.8">
+      <span class="slider-val" id="valTransDelay">0.8s</span>
     </div>
   </div>
 </div>
 
-<div class="flip-hint" id="flipHint">ťukni na kartičku pre preklad</div>
-
-<div class="action-row hidden" id="actionRow">
-  <button class="action-btn btn-bad" id="btnBad">✗ Neviem</button>
-  <button class="action-btn btn-skip" id="btnSkip">→</button>
-  <button class="action-btn btn-good" id="btnGood">✓ Viem</button>
-</div>
-
-<div class="nav-row">
-  <button class="nav-btn" id="btnPrev">← Späť</button>
-  <div class="card-counter" id="cardCounter">0 / 0</div>
-  <button class="audio-btn" id="btnAudio" title="Prehrať">🔊</button>
-  <button class="nav-btn" id="btnNext">Ďalej →</button>
-</div>
-
-<div class="done-screen" id="doneScreen">
-  <div class="done-icon">🎉</div>
-  <div class="done-title">Séria dokončená!</div>
-  <div class="done-sub" id="doneSub">—</div>
-  <div class="done-stats">
-    <div class="done-stat" style="background:var(--success-bg);color:var(--success)">
-      <span id="dGood">0</span><small>Viem</small>
-    </div>
-    <div class="done-stat" style="background:var(--danger-bg);color:var(--danger)">
-      <span id="dBad">0</span><small>Neviem</small>
-    </div>
-  </div>
-  <button class="restart-btn" id="btnRestart">Začať znova (všetky)</button>
-  <button class="repeat-btn" id="btnRepeatWrong">Opakovať chybné</button>
-</div>
+<div class="mini-list" id="miniList"></div>
 
 <script>
-const CATS = [
-  {id:"rodina",label:"Rodina",prompt:"Rodina a príbuzní"},
-  {id:"byvanie",label:"Bývanie",prompt:"Dom, byt, izby, nábytok, zariadenie"},
-  {id:"jedlo",label:"Jedlo",prompt:"Jedlo, nápoje, ingrediencie, pokrmy, reštaurácia"},
-  {id:"cas",label:"Čas",prompt:"Čas, dni, mesiace, ročné obdobia, dátumy"},
-  {id:"skola",label:"Škola",prompt:"Škola, vzdelávanie, učebné pomôcky, predmety"},
-  {id:"praca",label:"Práca",prompt:"Povolania, pracovisko, pracovné pomôcky, kancelária"},
-  {id:"doprava",label:"Doprava",prompt:"Dopravné prostriedky, cesty, stanice, smer"},
-  {id:"mesto",label:"Mesto",prompt:"Budovy, obchody, verejné miesta v meste, inštitúcie"},
-  {id:"zdravie",label:"Zdravie",prompt:"Časti tela, zdravie, choroby, lekár, lieky"},
-  {id:"oblecenie",label:"Oblečenie",prompt:"Oblečenie, obuv, doplnky, móda"},
-  {id:"priroda",label:"Príroda",prompt:"Počasie, krajina, zvieratá, rastliny, príroda"},
-  {id:"technologia",label:"Tech",prompt:"Elektronika, internet, komunikácia, prístroje"},
-  {id:"nakupovanie",label:"Nákupy",prompt:"Obchod, peniaze, platenie, ceny, produkty"},
-  {id:"volny_cas",label:"Voľný čas",prompt:"Záľuby, šport, kultúra, cestovanie, zábava"},
-  {id:"pocity",label:"Pocity",prompt:"Emócie, pocity, vlastnosti ľudí, charakter, nálady"},
-  {id:"osobne",label:"Osobné",prompt:"Osobné údaje, rodina, vzťahy, identita, bydlisko"},
-  {id:"farby_cisla",label:"Farby a čísla",prompt:"Farby, čísla 0-1000, poradia, množstvá"},
-  {id:"slovesa_zakladne",label:"Slovesá zákl.",prompt:"Najdôležitejšie základné slovesá A1-A2 (min. 80 slovies)"},
-  {id:"slovesa_pohyb",label:"Slovesá pohyb",prompt:"Slovesá pohybu, smeru, cestovania, premiestňovania"},
-  {id:"slovesa_kazdy",label:"Slovesá každodenné",prompt:"Bežné každodenné slovesá, rutina, domáce aktivity"},
-  {id:"pridavne",label:"Prídavné mená",prompt:"Prídavné mená – popis vecí, ľudí, situácií, prostredí"},
-  {id:"prislovky",label:"Príslovky",prompt:"Príslovky miesta, času, spôsobu a základné predložky"},
-  {id:"zakladne_frazy",label:"Frázy",prompt:"Pozdravy, zdvorilosť, základné konverzačné frázy"},
-  {id:"otazky",label:"Otázky",prompt:"Opytovacie slová a ich použitie v nemčine"},
+const W = [
+// RODINA
+{w:"der Vater",tr:"otec",l:"A1",c:"Rodina"},{w:"die Mutter",tr:"matka",l:"A1",c:"Rodina"},
+{w:"der Bruder",tr:"brat",l:"A1",c:"Rodina"},{w:"die Schwester",tr:"sestra",l:"A1",c:"Rodina"},
+{w:"der Sohn",tr:"syn",l:"A1",c:"Rodina"},{w:"die Tochter",tr:"dcéra",l:"A1",c:"Rodina"},
+{w:"der Mann",tr:"muž / manžel",l:"A1",c:"Rodina"},{w:"die Frau",tr:"žena / manželka",l:"A1",c:"Rodina"},
+{w:"das Kind",tr:"dieťa",l:"A1",c:"Rodina"},{w:"der Großvater",tr:"starý otec",l:"A1",c:"Rodina"},
+{w:"die Großmutter",tr:"stará mama",l:"A1",c:"Rodina"},{w:"die Eltern",tr:"rodičia",l:"A1",c:"Rodina"},
+{w:"die Familie",tr:"rodina",l:"A1",c:"Rodina"},{w:"der Onkel",tr:"strýko",l:"A2",c:"Rodina"},
+{w:"die Tante",tr:"teta",l:"A2",c:"Rodina"},{w:"der Cousin",tr:"bratranec",l:"A2",c:"Rodina"},
+{w:"die Cousine",tr:"sesternica",l:"A2",c:"Rodina"},{w:"der Neffe",tr:"synovec",l:"A2",c:"Rodina"},
+{w:"die Nichte",tr:"neter",l:"A2",c:"Rodina"},{w:"der Freund",tr:"priateľ / kamarát",l:"A1",c:"Rodina"},
+{w:"die Freundin",tr:"priateľka / kamarátka",l:"A1",c:"Rodina"},{w:"der Partner",tr:"partner",l:"A2",c:"Rodina"},
+{w:"die Partnerin",tr:"partnerka",l:"A2",c:"Rodina"},{w:"der Nachbar",tr:"sused",l:"A2",c:"Rodina"},
+// BÝVANIE
+{w:"das Haus",tr:"dom",l:"A1",c:"Bývanie"},{w:"die Wohnung",tr:"byt",l:"A1",c:"Bývanie"},
+{w:"das Zimmer",tr:"izba",l:"A1",c:"Bývanie"},{w:"die Küche",tr:"kuchyňa",l:"A1",c:"Bývanie"},
+{w:"das Badezimmer",tr:"kúpeľňa",l:"A1",c:"Bývanie"},{w:"das Schlafzimmer",tr:"spálňa",l:"A1",c:"Bývanie"},
+{w:"das Wohnzimmer",tr:"obývačka",l:"A1",c:"Bývanie"},{w:"der Garten",tr:"záhrada",l:"A1",c:"Bývanie"},
+{w:"die Tür",tr:"dvere",l:"A1",c:"Bývanie"},{w:"das Fenster",tr:"okno",l:"A1",c:"Bývanie"},
+{w:"der Tisch",tr:"stôl",l:"A1",c:"Bývanie"},{w:"der Stuhl",tr:"stolička",l:"A1",c:"Bývanie"},
+{w:"das Bett",tr:"posteľ",l:"A1",c:"Bývanie"},{w:"der Schrank",tr:"skriňa",l:"A1",c:"Bývanie"},
+{w:"die Lampe",tr:"lampa",l:"A1",c:"Bývanie"},{w:"das Sofa",tr:"pohovka",l:"A2",c:"Bývanie"},
+{w:"der Kühlschrank",tr:"chladnička",l:"A2",c:"Bývanie"},{w:"der Herd",tr:"sporák",l:"A2",c:"Bývanie"},
+{w:"die Waschmaschine",tr:"práčka",l:"A2",c:"Bývanie"},{w:"die Spülmaschine",tr:"umývačka riadu",l:"A2",c:"Bývanie"},
+{w:"der Keller",tr:"pivnica",l:"A2",c:"Bývanie"},{w:"der Balkon",tr:"balkón",l:"A2",c:"Bývanie"},
+{w:"die Treppe",tr:"schody",l:"A2",c:"Bývanie"},{w:"der Aufzug",tr:"výťah",l:"A2",c:"Bývanie"},
+{w:"die Wand",tr:"stena",l:"A2",c:"Bývanie"},{w:"der Boden",tr:"podlaha",l:"A2",c:"Bývanie"},
+{w:"die Decke",tr:"strop",l:"A2",c:"Bývanie"},{w:"das Regal",tr:"polica",l:"A2",c:"Bývanie"},
+// JEDLO
+{w:"das Brot",tr:"chlieb",l:"A1",c:"Jedlo"},{w:"die Butter",tr:"maslo",l:"A1",c:"Jedlo"},
+{w:"das Ei",tr:"vajce",l:"A1",c:"Jedlo"},{w:"der Käse",tr:"syr",l:"A1",c:"Jedlo"},
+{w:"die Milch",tr:"mlieko",l:"A1",c:"Jedlo"},{w:"das Fleisch",tr:"mäso",l:"A1",c:"Jedlo"},
+{w:"der Fisch",tr:"ryba",l:"A1",c:"Jedlo"},{w:"das Gemüse",tr:"zelenina",l:"A1",c:"Jedlo"},
+{w:"das Obst",tr:"ovocie",l:"A1",c:"Jedlo"},{w:"der Apfel",tr:"jablko",l:"A1",c:"Jedlo"},
+{w:"die Banane",tr:"banán",l:"A1",c:"Jedlo"},{w:"die Orange",tr:"pomaranč",l:"A1",c:"Jedlo"},
+{w:"die Tomate",tr:"paradajka",l:"A1",c:"Jedlo"},{w:"die Kartoffel",tr:"zemiak",l:"A1",c:"Jedlo"},
+{w:"der Reis",tr:"ryža",l:"A1",c:"Jedlo"},{w:"die Nudeln",tr:"cestoviny",l:"A1",c:"Jedlo"},
+{w:"der Kaffee",tr:"káva",l:"A1",c:"Jedlo"},{w:"der Tee",tr:"čaj",l:"A1",c:"Jedlo"},
+{w:"das Wasser",tr:"voda",l:"A1",c:"Jedlo"},{w:"der Saft",tr:"džús",l:"A1",c:"Jedlo"},
+{w:"das Bier",tr:"pivo",l:"A1",c:"Jedlo"},{w:"der Wein",tr:"víno",l:"A1",c:"Jedlo"},
+{w:"die Suppe",tr:"polievka",l:"A2",c:"Jedlo"},{w:"der Salat",tr:"šalát",l:"A2",c:"Jedlo"},
+{w:"der Zucker",tr:"cukor",l:"A2",c:"Jedlo"},{w:"das Salz",tr:"soľ",l:"A2",c:"Jedlo"},
+{w:"das Öl",tr:"olej",l:"A2",c:"Jedlo"},{w:"der Essig",tr:"ocot",l:"A2",c:"Jedlo"},
+{w:"das Mehl",tr:"múka",l:"A2",c:"Jedlo"},{w:"der Kuchen",tr:"koláč",l:"A2",c:"Jedlo"},
+{w:"die Wurst",tr:"klobása / saláma",l:"A2",c:"Jedlo"},{w:"der Schinken",tr:"šunka",l:"A2",c:"Jedlo"},
+{w:"das Hähnchen",tr:"kurča",l:"A2",c:"Jedlo"},{w:"das Schweinefleisch",tr:"bravčové mäso",l:"A2",c:"Jedlo"},
+{w:"das Rindfleisch",tr:"hovädzie mäso",l:"A2",c:"Jedlo"},{w:"die Erdbeere",tr:"jahoda",l:"A2",c:"Jedlo"},
+{w:"die Zwiebel",tr:"cibuľa",l:"A2",c:"Jedlo"},{w:"der Knoblauch",tr:"cesnak",l:"A2",c:"Jedlo"},
+{w:"die Karotte",tr:"mrkva",l:"A2",c:"Jedlo"},{w:"der Paprika",tr:"paprika",l:"A2",c:"Jedlo"},
+{w:"das Frühstück",tr:"raňajky",l:"A1",c:"Jedlo"},{w:"das Mittagessen",tr:"obed",l:"A1",c:"Jedlo"},
+{w:"das Abendessen",tr:"večera",l:"A1",c:"Jedlo"},{w:"die Speisekarte",tr:"jedálny lístok",l:"A2",c:"Jedlo"},
+// ČAS
+{w:"der Tag",tr:"deň",l:"A1",c:"Čas"},{w:"die Woche",tr:"týždeň",l:"A1",c:"Čas"},
+{w:"der Monat",tr:"mesiac",l:"A1",c:"Čas"},{w:"das Jahr",tr:"rok",l:"A1",c:"Čas"},
+{w:"die Stunde",tr:"hodina",l:"A1",c:"Čas"},{w:"die Minute",tr:"minúta",l:"A1",c:"Čas"},
+{w:"die Sekunde",tr:"sekunda",l:"A2",c:"Čas"},{w:"der Morgen",tr:"ráno",l:"A1",c:"Čas"},
+{w:"der Mittag",tr:"poludnie",l:"A1",c:"Čas"},{w:"der Abend",tr:"večer",l:"A1",c:"Čas"},
+{w:"die Nacht",tr:"noc",l:"A1",c:"Čas"},{w:"die Uhr",tr:"hodiny / čas",l:"A1",c:"Čas"},
+{w:"das Wochenende",tr:"víkend",l:"A1",c:"Čas"},{w:"der Montag",tr:"pondelok",l:"A1",c:"Čas"},
+{w:"der Dienstag",tr:"utorok",l:"A1",c:"Čas"},{w:"der Mittwoch",tr:"streda",l:"A1",c:"Čas"},
+{w:"der Donnerstag",tr:"štvrtok",l:"A1",c:"Čas"},{w:"der Freitag",tr:"piatok",l:"A1",c:"Čas"},
+{w:"der Samstag",tr:"sobota",l:"A1",c:"Čas"},{w:"der Sonntag",tr:"nedeľa",l:"A1",c:"Čas"},
+{w:"der Januar",tr:"január",l:"A1",c:"Čas"},{w:"der Februar",tr:"február",l:"A1",c:"Čas"},
+{w:"der März",tr:"marec",l:"A1",c:"Čas"},{w:"der April",tr:"apríl",l:"A1",c:"Čas"},
+{w:"der Mai",tr:"máj",l:"A1",c:"Čas"},{w:"der Juni",tr:"jún",l:"A1",c:"Čas"},
+{w:"der Juli",tr:"júl",l:"A1",c:"Čas"},{w:"der August",tr:"august",l:"A1",c:"Čas"},
+{w:"der September",tr:"september",l:"A1",c:"Čas"},{w:"der Oktober",tr:"október",l:"A1",c:"Čas"},
+{w:"der November",tr:"november",l:"A1",c:"Čas"},{w:"der Dezember",tr:"december",l:"A1",c:"Čas"},
+{w:"der Frühling",tr:"jar",l:"A1",c:"Čas"},{w:"der Sommer",tr:"leto",l:"A1",c:"Čas"},
+{w:"der Herbst",tr:"jeseň",l:"A1",c:"Čas"},{w:"der Winter",tr:"zima",l:"A1",c:"Čas"},
+// ŠKOLA
+{w:"die Schule",tr:"škola",l:"A1",c:"Škola"},{w:"der Lehrer",tr:"učiteľ",l:"A1",c:"Škola"},
+{w:"die Lehrerin",tr:"učiteľka",l:"A1",c:"Škola"},{w:"der Schüler",tr:"žiak",l:"A1",c:"Škola"},
+{w:"die Schülerin",tr:"žiačka",l:"A1",c:"Škola"},{w:"das Buch",tr:"kniha",l:"A1",c:"Škola"},
+{w:"der Stift",tr:"pero / ceruzka",l:"A1",c:"Škola"},{w:"das Heft",tr:"zošit",l:"A1",c:"Škola"},
+{w:"die Tasche",tr:"taška",l:"A1",c:"Škola"},{w:"der Unterricht",tr:"vyučovanie",l:"A1",c:"Škola"},
+{w:"die Hausaufgabe",tr:"domáca úloha",l:"A1",c:"Škola"},{w:"die Note",tr:"známka",l:"A2",c:"Škola"},
+{w:"der Kurs",tr:"kurz",l:"A2",c:"Škola"},{w:"die Universität",tr:"univerzita",l:"A2",c:"Škola"},
+{w:"das Klassenzimmer",tr:"trieda",l:"A1",c:"Škola"},{w:"die Tafel",tr:"tabuľa",l:"A1",c:"Škola"},
+{w:"der Radiergummi",tr:"guma",l:"A1",c:"Škola"},{w:"der Bleistift",tr:"ceruzka",l:"A1",c:"Škola"},
+{w:"das Lineal",tr:"pravítko",l:"A2",c:"Škola"},{w:"die Schere",tr:"nožnice",l:"A2",c:"Škola"},
+{w:"das Wörterbuch",tr:"slovník",l:"A2",c:"Škola"},{w:"die Prüfung",tr:"skúška",l:"A2",c:"Škola"},
+// PRÁCA
+{w:"die Arbeit",tr:"práca",l:"A1",c:"Práca"},{w:"der Job",tr:"zamestnanie",l:"A1",c:"Práca"},
+{w:"das Büro",tr:"kancelária",l:"A1",c:"Práca"},{w:"der Chef",tr:"šéf",l:"A2",c:"Práca"},
+{w:"die Chefin",tr:"šéfka",l:"A2",c:"Práca"},{w:"der Kollege",tr:"kolega",l:"A2",c:"Práca"},
+{w:"das Gehalt",tr:"plat",l:"A2",c:"Práca"},{w:"die Firma",tr:"firma",l:"A2",c:"Práca"},
+{w:"der Arzt",tr:"lekár",l:"A1",c:"Práca"},{w:"die Ärztin",tr:"lekárka",l:"A1",c:"Práca"},
+{w:"der Verkäufer",tr:"predavač",l:"A2",c:"Práca"},{w:"der Fahrer",tr:"vodič",l:"A2",c:"Práca"},
+{w:"der Koch",tr:"kuchár",l:"A2",c:"Práca"},{w:"der Ingenieur",tr:"inžinier",l:"A2",c:"Práca"},
+{w:"der Informatiker",tr:"informatik",l:"A2",c:"Práca"},{w:"der Mechaniker",tr:"mechanik",l:"A2",c:"Práca"},
+{w:"der Kellner",tr:"čašník",l:"A2",c:"Práca"},{w:"die Krankenschwester",tr:"zdravotná sestra",l:"A2",c:"Práca"},
+{w:"der Polizist",tr:"policajt",l:"A2",c:"Práca"},{w:"der Feuerwehrmann",tr:"hasič",l:"A2",c:"Práca"},
+// DOPRAVA
+{w:"das Auto",tr:"auto",l:"A1",c:"Doprava"},{w:"der Bus",tr:"autobus",l:"A1",c:"Doprava"},
+{w:"der Zug",tr:"vlak",l:"A1",c:"Doprava"},{w:"das Flugzeug",tr:"lietadlo",l:"A1",c:"Doprava"},
+{w:"das Fahrrad",tr:"bicykel",l:"A1",c:"Doprava"},{w:"die U-Bahn",tr:"metro",l:"A1",c:"Doprava"},
+{w:"der Bahnhof",tr:"železničná stanica",l:"A1",c:"Doprava"},{w:"der Flughafen",tr:"letisko",l:"A2",c:"Doprava"},
+{w:"die Straße",tr:"ulica",l:"A1",c:"Doprava"},{w:"der Weg",tr:"cestička / cesta",l:"A1",c:"Doprava"},
+{w:"die Haltestelle",tr:"zastávka",l:"A2",c:"Doprava"},{w:"das Ticket",tr:"lístok",l:"A1",c:"Doprava"},
+{w:"der Taxifahrer",tr:"taxikár",l:"A2",c:"Doprava"},{w:"das Motorrad",tr:"motorka",l:"A2",c:"Doprava"},
+{w:"der Lastwagen",tr:"nákladné auto",l:"A2",c:"Doprava"},{w:"die Ampel",tr:"semafor",l:"A2",c:"Doprava"},
+{w:"der Parkplatz",tr:"parkovisko",l:"A2",c:"Doprava"},{w:"die Tankstelle",tr:"čerpacia stanica",l:"A2",c:"Doprava"},
+{w:"die Kreuzung",tr:"križovatka",l:"A2",c:"Doprava"},{w:"der Führerschein",tr:"vodičský preukaz",l:"A2",c:"Doprava"},
+// MESTO
+{w:"das Geschäft",tr:"obchod",l:"A1",c:"Mesto"},{w:"der Supermarkt",tr:"supermarket",l:"A1",c:"Mesto"},
+{w:"die Bank",tr:"banka",l:"A1",c:"Mesto"},{w:"das Krankenhaus",tr:"nemocnica",l:"A1",c:"Mesto"},
+{w:"die Apotheke",tr:"lekáreň",l:"A1",c:"Mesto"},{w:"das Restaurant",tr:"reštaurácia",l:"A1",c:"Mesto"},
+{w:"das Hotel",tr:"hotel",l:"A1",c:"Mesto"},{w:"der Park",tr:"park",l:"A1",c:"Mesto"},
+{w:"die Stadt",tr:"mesto",l:"A1",c:"Mesto"},{w:"das Dorf",tr:"dedina",l:"A1",c:"Mesto"},
+{w:"der Markt",tr:"trh",l:"A2",c:"Mesto"},{w:"das Museum",tr:"múzeum",l:"A2",c:"Mesto"},
+{w:"das Kino",tr:"kino",l:"A2",c:"Mesto"},{w:"die Post",tr:"pošta",l:"A2",c:"Mesto"},
+{w:"die Polizei",tr:"polícia",l:"A2",c:"Mesto"},{w:"das Rathaus",tr:"radnica",l:"A2",c:"Mesto"},
+{w:"die Kirche",tr:"kostol",l:"A2",c:"Mesto"},{w:"das Schwimmbad",tr:"bazén",l:"A2",c:"Mesto"},
+{w:"die Bibliothek",tr:"knižnica",l:"A2",c:"Mesto"},{w:"das Theater",tr:"divadlo",l:"A2",c:"Mesto"},
+// ZDRAVIE
+{w:"der Körper",tr:"telo",l:"A1",c:"Zdravie"},{w:"der Kopf",tr:"hlava",l:"A1",c:"Zdravie"},
+{w:"das Gesicht",tr:"tvár",l:"A1",c:"Zdravie"},{w:"das Auge",tr:"oko",l:"A1",c:"Zdravie"},
+{w:"das Ohr",tr:"ucho",l:"A1",c:"Zdravie"},{w:"der Mund",tr:"ústa",l:"A1",c:"Zdravie"},
+{w:"die Nase",tr:"nos",l:"A1",c:"Zdravie"},{w:"der Zahn",tr:"zub",l:"A1",c:"Zdravie"},
+{w:"der Arm",tr:"ruka (rameno)",l:"A1",c:"Zdravie"},{w:"die Hand",tr:"ruka (dlaň)",l:"A1",c:"Zdravie"},
+{w:"das Bein",tr:"noha",l:"A1",c:"Zdravie"},{w:"der Fuß",tr:"chodidlo",l:"A1",c:"Zdravie"},
+{w:"der Bauch",tr:"brucho",l:"A1",c:"Zdravie"},{w:"der Rücken",tr:"chrbát",l:"A2",c:"Zdravie"},
+{w:"die Krankheit",tr:"choroba",l:"A2",c:"Zdravie"},{w:"der Schmerz",tr:"bolesť",l:"A2",c:"Zdravie"},
+{w:"das Fieber",tr:"horúčka",l:"A2",c:"Zdravie"},{w:"die Tablette",tr:"tabletka",l:"A2",c:"Zdravie"},
+{w:"der Husten",tr:"kašeľ",l:"A2",c:"Zdravie"},{w:"der Schnupfen",tr:"nádcha",l:"A2",c:"Zdravie"},
+{w:"das Rezept",tr:"recept / predpis",l:"A2",c:"Zdravie"},{w:"die Allergie",tr:"alergia",l:"A2",c:"Zdravie"},
+// OBLEČENIE
+{w:"das Kleid",tr:"šaty",l:"A1",c:"Oblečenie"},{w:"die Hose",tr:"nohavice",l:"A1",c:"Oblečenie"},
+{w:"das Hemd",tr:"košeľa",l:"A1",c:"Oblečenie"},{w:"die Bluse",tr:"blúzka",l:"A1",c:"Oblečenie"},
+{w:"der Pullover",tr:"sveter",l:"A1",c:"Oblečenie"},{w:"die Jacke",tr:"bunda",l:"A1",c:"Oblečenie"},
+{w:"der Mantel",tr:"kabát",l:"A1",c:"Oblečenie"},{w:"der Schuh",tr:"topánka",l:"A1",c:"Oblečenie"},
+{w:"die Socke",tr:"ponožka",l:"A1",c:"Oblečenie"},{w:"der Hut",tr:"klobúk",l:"A2",c:"Oblečenie"},
+{w:"der Schal",tr:"šál",l:"A2",c:"Oblečenie"},{w:"die Handschuhe",tr:"rukavice",l:"A2",c:"Oblečenie"},
+{w:"der Rock",tr:"sukňa",l:"A2",c:"Oblečenie"},{w:"die Unterwäsche",tr:"spodná bielizeň",l:"A2",c:"Oblečenie"},
+{w:"der Anzug",tr:"oblek",l:"A2",c:"Oblečenie"},{w:"die Krawatte",tr:"kravata",l:"A2",c:"Oblečenie"},
+// PRÍRODA
+{w:"das Wetter",tr:"počasie",l:"A1",c:"Príroda"},{w:"der Regen",tr:"dážď",l:"A1",c:"Príroda"},
+{w:"der Schnee",tr:"sneh",l:"A1",c:"Príroda"},{w:"die Sonne",tr:"slnko",l:"A1",c:"Príroda"},
+{w:"der Wind",tr:"vietor",l:"A1",c:"Príroda"},{w:"das Meer",tr:"more",l:"A1",c:"Príroda"},
+{w:"der Fluss",tr:"rieka",l:"A1",c:"Príroda"},{w:"der Berg",tr:"hora",l:"A1",c:"Príroda"},
+{w:"der Wald",tr:"les",l:"A1",c:"Príroda"},{w:"der Hund",tr:"pes",l:"A1",c:"Príroda"},
+{w:"die Katze",tr:"mačka",l:"A1",c:"Príroda"},{w:"der Vogel",tr:"vták",l:"A1",c:"Príroda"},
+{w:"das Pferd",tr:"kôň",l:"A2",c:"Príroda"},{w:"die Kuh",tr:"krava",l:"A2",c:"Príroda"},
+{w:"der Baum",tr:"strom",l:"A1",c:"Príroda"},{w:"die Blume",tr:"kvet",l:"A1",c:"Príroda"},
+{w:"das Feld",tr:"pole",l:"A2",c:"Príroda"},{w:"der See",tr:"jazero",l:"A2",c:"Príroda"},
+{w:"der Himmel",tr:"obloha / nebo",l:"A2",c:"Príroda"},{w:"die Wolke",tr:"oblak",l:"A2",c:"Príroda"},
+{w:"der Nebel",tr:"hmla",l:"A2",c:"Príroda"},{w:"das Gewitter",tr:"búrka",l:"A2",c:"Príroda"},
+// TECHNOLÓGIA
+{w:"das Telefon",tr:"telefón",l:"A1",c:"Tech"},{w:"das Handy",tr:"mobilný telefón",l:"A1",c:"Tech"},
+{w:"der Computer",tr:"počítač",l:"A1",c:"Tech"},{w:"das Internet",tr:"internet",l:"A1",c:"Tech"},
+{w:"die E-Mail",tr:"email",l:"A1",c:"Tech"},{w:"das Foto",tr:"fotografia",l:"A1",c:"Tech"},
+{w:"der Fernseher",tr:"televízor",l:"A2",c:"Tech"},{w:"das Radio",tr:"rádio",l:"A2",c:"Tech"},
+{w:"der Drucker",tr:"tlačiareň",l:"A2",c:"Tech"},{w:"die Tastatur",tr:"klávesnica",l:"A2",c:"Tech"},
+{w:"die Maus",tr:"myš (počítač)",l:"A2",c:"Tech"},{w:"der Bildschirm",tr:"obrazovka",l:"A2",c:"Tech"},
+{w:"das Passwort",tr:"heslo",l:"A2",c:"Tech"},{w:"die App",tr:"aplikácia",l:"A2",c:"Tech"},
+// NAKUPOVANIE
+{w:"das Geld",tr:"peniaze",l:"A1",c:"Nákupy"},{w:"der Preis",tr:"cena",l:"A1",c:"Nákupy"},
+{w:"die Rechnung",tr:"účet",l:"A2",c:"Nákupy"},{w:"das Angebot",tr:"ponuka / akcia",l:"A2",c:"Nákupy"},
+{w:"der Rabatt",tr:"zľava",l:"A2",c:"Nákupy"},{w:"die Quittung",tr:"pokladničný blok",l:"A2",c:"Nákupy"},
+{w:"die Kreditkarte",tr:"kreditná karta",l:"A2",c:"Nákupy"},{w:"das Bargeld",tr:"hotovosť",l:"A2",c:"Nákupy"},
+{w:"der Euro",tr:"euro",l:"A1",c:"Nákupy"},{w:"der Cent",tr:"cent",l:"A1",c:"Nákupy"},
+// VOĽNÝ ČAS
+{w:"der Urlaub",tr:"dovolenka",l:"A1",c:"Voľný čas"},{w:"die Reise",tr:"cesta / výlet",l:"A1",c:"Voľný čas"},
+{w:"der Sport",tr:"šport",l:"A1",c:"Voľný čas"},{w:"die Musik",tr:"hudba",l:"A1",c:"Voľný čas"},
+{w:"das Spiel",tr:"hra",l:"A1",c:"Voľný čas"},{w:"der Film",tr:"film",l:"A1",c:"Voľný čas"},
+{w:"das Konzert",tr:"koncert",l:"A2",c:"Voľný čas"},{w:"die Party",tr:"večierok",l:"A2",c:"Voľný čas"},
+{w:"das Buch",tr:"kniha",l:"A1",c:"Voľný čas"},{w:"das Lesen",tr:"čítanie",l:"A1",c:"Voľný čas"},
+{w:"das Schwimmen",tr:"plávanie",l:"A2",c:"Voľný čas"},{w:"das Wandern",tr:"turistika",l:"A2",c:"Voľný čas"},
+{w:"das Tanzen",tr:"tanec",l:"A2",c:"Voľný čas"},{w:"das Kochen",tr:"varenie",l:"A2",c:"Voľný čas"},
+{w:"der Fußball",tr:"futbal",l:"A1",c:"Voľný čas"},{w:"das Tennis",tr:"tenis",l:"A2",c:"Voľný čas"},
+// FARBY
+{w:"rot",tr:"červená",l:"A1",c:"Farby"},{w:"blau",tr:"modrá",l:"A1",c:"Farby"},
+{w:"grün",tr:"zelená",l:"A1",c:"Farby"},{w:"gelb",tr:"žltá",l:"A1",c:"Farby"},
+{w:"schwarz",tr:"čierna",l:"A1",c:"Farby"},{w:"weiß",tr:"biela",l:"A1",c:"Farby"},
+{w:"grau",tr:"sivá",l:"A1",c:"Farby"},{w:"braun",tr:"hnedá",l:"A1",c:"Farby"},
+{w:"orange",tr:"oranžová",l:"A1",c:"Farby"},{w:"rosa",tr:"ružová",l:"A1",c:"Farby"},
+{w:"lila",tr:"fialová",l:"A2",c:"Farby"},{w:"beige",tr:"béžová",l:"A2",c:"Farby"},
+// ČÍSLA
+{w:"null",tr:"nula",l:"A1",c:"Čísla"},{w:"eins",tr:"jeden",l:"A1",c:"Čísla"},
+{w:"zwei",tr:"dva",l:"A1",c:"Čísla"},{w:"drei",tr:"tri",l:"A1",c:"Čísla"},
+{w:"vier",tr:"štyri",l:"A1",c:"Čísla"},{w:"fünf",tr:"päť",l:"A1",c:"Čísla"},
+{w:"sechs",tr:"šesť",l:"A1",c:"Čísla"},{w:"sieben",tr:"sedem",l:"A1",c:"Čísla"},
+{w:"acht",tr:"osem",l:"A1",c:"Čísla"},{w:"neun",tr:"deväť",l:"A1",c:"Čísla"},
+{w:"zehn",tr:"desať",l:"A1",c:"Čísla"},{w:"elf",tr:"jedenásť",l:"A1",c:"Čísla"},
+{w:"zwölf",tr:"dvanásť",l:"A1",c:"Čísla"},{w:"zwanzig",tr:"dvadsať",l:"A1",c:"Čísla"},
+{w:"dreißig",tr:"tridsať",l:"A1",c:"Čísla"},{w:"vierzig",tr:"štyridsať",l:"A1",c:"Čísla"},
+{w:"fünfzig",tr:"päťdesiat",l:"A1",c:"Čísla"},{w:"hundert",tr:"sto",l:"A1",c:"Čísla"},
+{w:"tausend",tr:"tisíc",l:"A1",c:"Čísla"},{w:"erste",tr:"prvý",l:"A2",c:"Čísla"},
+{w:"zweite",tr:"druhý",l:"A2",c:"Čísla"},{w:"dritte",tr:"tretí",l:"A2",c:"Čísla"},
+// ZÁKLADNÉ FRÁZY
+{w:"hallo",tr:"ahoj",l:"A1",c:"Frázy"},{w:"tschüss",tr:"čau / dovidenia",l:"A1",c:"Frázy"},
+{w:"bitte",tr:"prosím",l:"A1",c:"Frázy"},{w:"danke",tr:"ďakujem",l:"A1",c:"Frázy"},
+{w:"ja",tr:"áno",l:"A1",c:"Frázy"},{w:"nein",tr:"nie",l:"A1",c:"Frázy"},
+{w:"entschuldigung",tr:"prepáčte",l:"A1",c:"Frázy"},{w:"guten Morgen",tr:"dobré ráno",l:"A1",c:"Frázy"},
+{w:"guten Tag",tr:"dobrý deň",l:"A1",c:"Frázy"},{w:"guten Abend",tr:"dobrý večer",l:"A1",c:"Frázy"},
+{w:"auf Wiedersehen",tr:"dovidenia",l:"A1",c:"Frázy"},{w:"wie geht es Ihnen",tr:"ako sa máte (formálne)",l:"A1",c:"Frázy"},
+{w:"wie geht es dir",tr:"ako sa máš (neformálne)",l:"A1",c:"Frázy"},{w:"mir geht es gut",tr:"mám sa dobre",l:"A1",c:"Frázy"},
+{w:"ich verstehe nicht",tr:"nerozumiem",l:"A1",c:"Frázy"},{w:"wie bitte",tr:"ako prosím? / čo?",l:"A1",c:"Frázy"},
+{w:"ich spreche kein Deutsch",tr:"nehovorím po nemecky",l:"A2",c:"Frázy"},{w:"können Sie langsamer sprechen",tr:"môžete hovoriť pomalšie?",l:"A2",c:"Frázy"},
+// ZÁKLADNÉ SLOVESÁ
+{w:"sein",tr:"byť",l:"A1",c:"Slovesá"},{w:"haben",tr:"mať",l:"A1",c:"Slovesá"},
+{w:"werden",tr:"stať sa / budem",l:"A1",c:"Slovesá"},{w:"machen",tr:"robiť",l:"A1",c:"Slovesá"},
+{w:"gehen",tr:"ísť",l:"A1",c:"Slovesá"},{w:"kommen",tr:"prísť",l:"A1",c:"Slovesá"},
+{w:"sehen",tr:"vidieť",l:"A1",c:"Slovesá"},{w:"hören",tr:"počuť",l:"A1",c:"Slovesá"},
+{w:"sprechen",tr:"hovoriť",l:"A1",c:"Slovesá"},{w:"lesen",tr:"čítať",l:"A1",c:"Slovesá"},
+{w:"schreiben",tr:"písať",l:"A1",c:"Slovesá"},{w:"essen",tr:"jesť",l:"A1",c:"Slovesá"},
+{w:"trinken",tr:"piť",l:"A1",c:"Slovesá"},{w:"schlafen",tr:"spať",l:"A1",c:"Slovesá"},
+{w:"arbeiten",tr:"pracovať",l:"A1",c:"Slovesá"},{w:"kaufen",tr:"kúpiť",l:"A1",c:"Slovesá"},
+{w:"wohnen",tr:"bývať",l:"A1",c:"Slovesá"},{w:"heißen",tr:"volať sa",l:"A1",c:"Slovesá"},
+{w:"mögen",tr:"mať rád",l:"A1",c:"Slovesá"},{w:"wollen",tr:"chcieť",l:"A1",c:"Slovesá"},
+{w:"können",tr:"vedieť / môcť",l:"A1",c:"Slovesá"},{w:"müssen",tr:"musieť",l:"A1",c:"Slovesá"},
+{w:"dürfen",tr:"smieť",l:"A1",c:"Slovesá"},{w:"sollen",tr:"mať (povinnosť)",l:"A2",c:"Slovesá"},
+{w:"fahren",tr:"cestovať / jazdiť",l:"A1",c:"Slovesá"},{w:"fliegen",tr:"letieť",l:"A2",c:"Slovesá"},
+{w:"laufen",tr:"bežať / chodiť",l:"A1",c:"Slovesá"},{w:"lernen",tr:"učiť sa",l:"A1",c:"Slovesá"},
+{w:"helfen",tr:"pomáhať",l:"A1",c:"Slovesá"},{w:"fragen",tr:"pýtať sa",l:"A1",c:"Slovesá"},
+{w:"antworten",tr:"odpovedať",l:"A1",c:"Slovesá"},{w:"spielen",tr:"hrať sa",l:"A1",c:"Slovesá"},
+{w:"brauchen",tr:"potrebovať",l:"A1",c:"Slovesá"},{w:"kennen",tr:"poznať (osobu)",l:"A1",c:"Slovesá"},
+{w:"wissen",tr:"vedieť (fakt)",l:"A1",c:"Slovesá"},{w:"öffnen",tr:"otvoriť",l:"A2",c:"Slovesá"},
+{w:"schließen",tr:"zatvoriť",l:"A2",c:"Slovesá"},{w:"beginnen",tr:"začať",l:"A2",c:"Slovesá"},
+{w:"vergessen",tr:"zabudnúť",l:"A2",c:"Slovesá"},{w:"verstehen",tr:"rozumieť",l:"A1",c:"Slovesá"},
+{w:"suchen",tr:"hľadať",l:"A1",c:"Slovesá"},{w:"finden",tr:"nájsť",l:"A1",c:"Slovesá"},
+{w:"bringen",tr:"priniesť",l:"A1",c:"Slovesá"},{w:"nehmen",tr:"vziať",l:"A1",c:"Slovesá"},
+{w:"geben",tr:"dať",l:"A1",c:"Slovesá"},{w:"zeigen",tr:"ukázať",l:"A1",c:"Slovesá"},
+{w:"denken",tr:"myslieť",l:"A1",c:"Slovesá"},{w:"glauben",tr:"veriť / myslieť si",l:"A2",c:"Slovesá"},
+{w:"hoffen",tr:"dúfať",l:"A2",c:"Slovesá"},{w:"warten",tr:"čakať",l:"A1",c:"Slovesá"},
+{w:"bleiben",tr:"zostať",l:"A1",c:"Slovesá"},{w:"treffen",tr:"stretnúť",l:"A2",c:"Slovesá"},
+{w:"bezahlen",tr:"zaplatiť",l:"A2",c:"Slovesá"},{w:"bestellen",tr:"objednať",l:"A2",c:"Slovesá"},
+{w:"reservieren",tr:"rezervovať",l:"A2",c:"Slovesá"},{w:"empfehlen",tr:"odporučiť",l:"A2",c:"Slovesá"},
+{w:"erklären",tr:"vysvetliť",l:"A2",c:"Slovesá"},{w:"beschreiben",tr:"opísať",l:"A2",c:"Slovesá"},
+// PRÍDAVNÉ MENÁ
+{w:"groß",tr:"veľký",l:"A1",c:"Prídavné mená"},{w:"klein",tr:"malý",l:"A1",c:"Prídavné mená"},
+{w:"gut",tr:"dobrý",l:"A1",c:"Prídavné mená"},{w:"schlecht",tr:"zlý",l:"A1",c:"Prídavné mená"},
+{w:"neu",tr:"nový",l:"A1",c:"Prídavné mená"},{w:"alt",tr:"starý",l:"A1",c:"Prídavné mená"},
+{w:"jung",tr:"mladý",l:"A1",c:"Prídavné mená"},{w:"schön",tr:"pekný",l:"A1",c:"Prídavné mená"},
+{w:"billig",tr:"lacný",l:"A1",c:"Prídavné mená"},{w:"teuer",tr:"drahý",l:"A1",c:"Prídavné mená"},
+{w:"schnell",tr:"rýchly",l:"A1",c:"Prídavné mená"},{w:"langsam",tr:"pomalý",l:"A1",c:"Prídavné mená"},
+{w:"kalt",tr:"studený",l:"A1",c:"Prídavné mená"},{w:"warm",tr:"teplý",l:"A1",c:"Prídavné mená"},
+{w:"heiß",tr:"horúci",l:"A1",c:"Prídavné mená"},{w:"leicht",tr:"ľahký",l:"A1",c:"Prídavné mená"},
+{w:"schwer",tr:"ťažký",l:"A1",c:"Prídavné mená"},{w:"interessant",tr:"zaujímavý",l:"A1",c:"Prídavné mená"},
+{w:"langweilig",tr:"nudný",l:"A1",c:"Prídavné mená"},{w:"müde",tr:"unavený",l:"A1",c:"Prídavné mená"},
+{w:"krank",tr:"chorý",l:"A1",c:"Prídavné mená"},{w:"gesund",tr:"zdravý",l:"A1",c:"Prídavné mená"},
+{w:"glücklich",tr:"šťastný",l:"A2",c:"Prídavné mená"},{w:"traurig",tr:"smutný",l:"A2",c:"Prídavné mená"},
+{w:"lustig",tr:"vtipný / zábavný",l:"A2",c:"Prídavné mená"},{w:"ruhig",tr:"pokojný / tichý",l:"A2",c:"Prídavné mená"},
+{w:"laut",tr:"hlučný / nahlas",l:"A2",c:"Prídavné mená"},{w:"sauber",tr:"čistý",l:"A2",c:"Prídavné mená"},
+{w:"schmutzig",tr:"špinavý",l:"A2",c:"Prídavné mená"},{w:"richtig",tr:"správny / presne tak",l:"A2",c:"Prídavné mená"},
+{w:"falsch",tr:"nesprávny / zlý",l:"A2",c:"Prídavné mená"},{w:"einfach",tr:"jednoduchý",l:"A2",c:"Prídavné mená"},
+{w:"schwierig",tr:"ťažký / náročný",l:"A2",c:"Prídavné mená"},{w:"nett",tr:"milý / sympatický",l:"A2",c:"Prídavné mená"},
+{w:"freundlich",tr:"priateľský",l:"A2",c:"Prídavné mená"},{w:"höflich",tr:"zdvorilý",l:"A2",c:"Prídavné mená"},
+// PRÍSLOVKY
+{w:"hier",tr:"tu",l:"A1",c:"Príslovky"},{w:"dort",tr:"tam",l:"A1",c:"Príslovky"},
+{w:"heute",tr:"dnes",l:"A1",c:"Príslovky"},{w:"morgen",tr:"zajtra",l:"A1",c:"Príslovky"},
+{w:"gestern",tr:"včera",l:"A1",c:"Príslovky"},{w:"jetzt",tr:"teraz",l:"A1",c:"Príslovky"},
+{w:"immer",tr:"vždy",l:"A1",c:"Príslovky"},{w:"nie",tr:"nikdy",l:"A1",c:"Príslovky"},
+{w:"oft",tr:"často",l:"A1",c:"Príslovky"},{w:"manchmal",tr:"niekedy",l:"A1",c:"Príslovky"},
+{w:"sehr",tr:"veľmi",l:"A1",c:"Príslovky"},{w:"auch",tr:"tiež",l:"A1",c:"Príslovky"},
+{w:"noch",tr:"ešte",l:"A1",c:"Príslovky"},{w:"schon",tr:"už",l:"A1",c:"Príslovky"},
+{w:"vielleicht",tr:"možno",l:"A2",c:"Príslovky"},{w:"zusammen",tr:"spolu",l:"A2",c:"Príslovky"},
+{w:"links",tr:"vľavo",l:"A2",c:"Príslovky"},{w:"rechts",tr:"vpravo",l:"A2",c:"Príslovky"},
+{w:"geradeaus",tr:"rovno",l:"A2",c:"Príslovky"},{w:"oben",tr:"hore",l:"A2",c:"Príslovky"},
+{w:"unten",tr:"dole",l:"A2",c:"Príslovky"},{w:"neben",tr:"vedľa",l:"A2",c:"Príslovky"},
+{w:"zwischen",tr:"medzi",l:"A2",c:"Príslovky"},{w:"vor",tr:"pred",l:"A2",c:"Príslovky"},
+{w:"hinter",tr:"za",l:"A2",c:"Príslovky"},{w:"über",tr:"nad",l:"A2",c:"Príslovky"},
+{w:"unter",tr:"pod",l:"A2",c:"Príslovky"},{w:"in",tr:"v / do",l:"A1",c:"Príslovky"},
+{w:"auf",tr:"na",l:"A1",c:"Príslovky"},{w:"mit",tr:"s / so",l:"A1",c:"Príslovky"},
+,
+// POCITY A VLASTNOSTI
+{w:"die Freude",tr:"radosť",l:"A1",c:"Pocity"},{w:"die Traurigkeit",tr:"smútok",l:"A2",c:"Pocity"},
+{w:"die Angst",tr:"strach",l:"A2",c:"Pocity"},{w:"die Liebe",tr:"láska",l:"A1",c:"Pocity"},
+{w:"der Ärger",tr:"hnevanie sa",l:"A2",c:"Pocity"},{w:"die Überraschung",tr:"prekvapenie",l:"A2",c:"Pocity"},
+{w:"die Hoffnung",tr:"nádej",l:"A2",c:"Pocity"},{w:"der Stress",tr:"stres",l:"A2",c:"Pocity"},
+{w:"die Ruhe",tr:"pokoj / ticho",l:"A2",c:"Pocity"},{w:"das Vertrauen",tr:"dôvera",l:"A2",c:"Pocity"},
+{w:"die Eifersucht",tr:"žiarlivosť",l:"A2",c:"Pocity"},{w:"die Enttäuschung",tr:"sklamanie",l:"A2",c:"Pocity"},
+{w:"glücklich",tr:"šťastný",l:"A1",c:"Pocity"},{w:"traurig",tr:"smutný",l:"A1",c:"Pocity"},
+{w:"wütend",tr:"nahnevaný",l:"A2",c:"Pocity"},{w:"ängstlich",tr:"bojazlivý / ustarostený",l:"A2",c:"Pocity"},
+{w:"aufgeregt",tr:"vzrušený / nervózny",l:"A2",c:"Pocity"},{w:"entspannt",tr:"uvoľnený",l:"A2",c:"Pocity"},
+{w:"verliebt",tr:"zamilovaný",l:"A2",c:"Pocity"},{w:"einsam",tr:"osamelý",l:"A2",c:"Pocity"},
+// OSOBNÉ INFORMÁCIE
+{w:"der Name",tr:"meno",l:"A1",c:"Osobné"},{w:"der Vorname",tr:"krstné meno",l:"A1",c:"Osobné"},
+{w:"der Nachname",tr:"priezvisko",l:"A1",c:"Osobné"},{w:"das Alter",tr:"vek",l:"A1",c:"Osobné"},
+{w:"die Adresse",tr:"adresa",l:"A1",c:"Osobné"},{w:"die Sprache",tr:"jazyk",l:"A1",c:"Osobné"},
+{w:"das Land",tr:"krajina",l:"A1",c:"Osobné"},{w:"die Nationalität",tr:"národnosť",l:"A2",c:"Osobné"},
+{w:"der Beruf",tr:"povolanie",l:"A1",c:"Osobné"},{w:"das Hobby",tr:"záľuba",l:"A1",c:"Osobné"},
+{w:"die Telefonnummer",tr:"telefónne číslo",l:"A1",c:"Osobné"},{w:"die E-Mail-Adresse",tr:"emailová adresa",l:"A1",c:"Osobné"},
+{w:"das Geburtsdatum",tr:"dátum narodenia",l:"A2",c:"Osobné"},{w:"der Geburtsort",tr:"miesto narodenia",l:"A2",c:"Osobné"},
+{w:"der Reisepass",tr:"cestovný pas",l:"A2",c:"Osobné"},{w:"der Personalausweis",tr:"občiansky preukaz",l:"A2",c:"Osobné"},
+{w:"die Unterschrift",tr:"podpis",l:"A2",c:"Osobné"},{w:"verheiratet",tr:"ženatý / vydatá",l:"A2",c:"Osobné"},
+{w:"ledig",tr:"slobodný/á",l:"A2",c:"Osobné"},{w:"geschieden",tr:"rozvedený/á",l:"A2",c:"Osobné"},
+// OPYTOVACIE SLOVÁ
+{w:"wer",tr:"kto",l:"A1",c:"Otázky"},{w:"was",tr:"čo",l:"A1",c:"Otázky"},
+{w:"wo",tr:"kde",l:"A1",c:"Otázky"},{w:"wann",tr:"kedy",l:"A1",c:"Otázky"},
+{w:"warum",tr:"prečo",l:"A1",c:"Otázky"},{w:"wie",tr:"ako",l:"A1",c:"Otázky"},
+{w:"wie viel",tr:"koľko (množstvo)",l:"A1",c:"Otázky"},{w:"wie viele",tr:"koľko (počet)",l:"A1",c:"Otázky"},
+{w:"welcher",tr:"ktorý",l:"A1",c:"Otázky"},{w:"woher",tr:"odkiaľ",l:"A1",c:"Otázky"},
+{w:"wohin",tr:"kam",l:"A1",c:"Otázky"},{w:"womit",tr:"čím / s čím",l:"A2",c:"Otázky"},
+{w:"wofür",tr:"prečo / za čo",l:"A2",c:"Otázky"},{w:"worüber",tr:"o čom",l:"A2",c:"Otázky"},
+// ĎALŠIE SLOVESÁ A2
+{w:"aufstehen",tr:"vstať",l:"A2",c:"Slovesá"},{w:"sich waschen",tr:"umyť sa",l:"A2",c:"Slovesá"},
+{w:"sich anziehen",tr:"obliecť sa",l:"A2",c:"Slovesá"},{w:"sich ausziehen",tr:"vyzliecť sa",l:"A2",c:"Slovesá"},
+{w:"sich setzen",tr:"sadnúť si",l:"A2",c:"Slovesá"},{w:"sich freuen",tr:"tešiť sa",l:"A2",c:"Slovesá"},
+{w:"sich ärgern",tr:"hnevať sa",l:"A2",c:"Slovesá"},{w:"sich vorstellen",tr:"predstaviť sa",l:"A2",c:"Slovesá"},
+{w:"sich erinnern",tr:"pamätať si",l:"A2",c:"Slovesá"},{w:"sich entscheiden",tr:"rozhodnúť sa",l:"A2",c:"Slovesá"},
+{w:"einladen",tr:"pozvať",l:"A2",c:"Slovesá"},{w:"abholen",tr:"vyzdvihnúť / prísť po",l:"A2",c:"Slovesá"},
+{w:"anrufen",tr:"zavolať (telefonicky)",l:"A2",c:"Slovesá"},{w:"zurückrufen",tr:"zavolať späť",l:"A2",c:"Slovesá"},
+{w:"abschicken",tr:"odoslať",l:"A2",c:"Slovesá"},{w:"herunterladen",tr:"stiahnuť",l:"A2",c:"Slovesá"},
+{w:"hochladen",tr:"nahrať",l:"A2",c:"Slovesá"},{w:"ausdrucken",tr:"vytlačiť",l:"A2",c:"Slovesá"},
+{w:"ausfüllen",tr:"vyplniť (formulár)",l:"A2",c:"Slovesá"},{w:"unterschreiben",tr:"podpísať",l:"A2",c:"Slovesá"},
+{w:"überweisen",tr:"previesť (peniaze)",l:"A2",c:"Slovesá"},{w:"umsteigen",tr:"prestúpiť (doprava)",l:"A2",c:"Slovesá"},
+{w:"einsteigen",tr:"nastúpiť",l:"A2",c:"Slovesá"},{w:"aussteigen",tr:"vystúpiť",l:"A2",c:"Slovesá"},
+{w:"parken",tr:"parkovať",l:"A2",c:"Slovesá"},{w:"tanken",tr:"natankovať",l:"A2",c:"Slovesá"},
+{w:"buchen",tr:"rezervovať / kúpiť",l:"A2",c:"Slovesá"},{w:"packen",tr:"baliť",l:"A2",c:"Slovesá"},
+{w:"fotografieren",tr:"fotografovať",l:"A2",c:"Slovesá"},{w:"recyceln",tr:"recyklovať",l:"A2",c:"Slovesá"},
+// ĎALŠIE PODSTATNÉ MENÁ
+{w:"der Brief",tr:"list",l:"A1",c:"Komunikácia"},{w:"das Paket",tr:"balík",l:"A2",c:"Komunikácia"},
+{w:"die Nachricht",tr:"správa",l:"A2",c:"Komunikácia"},{w:"das Gespräch",tr:"rozhovor",l:"A2",c:"Komunikácia"},
+{w:"die Antwort",tr:"odpoveď",l:"A1",c:"Komunikácia"},{w:"die Frage",tr:"otázka",l:"A1",c:"Komunikácia"},
+{w:"die Einladung",tr:"pozvánka",l:"A2",c:"Komunikácia"},{w:"die Entschuldigung",tr:"ospravedlnenie",l:"A2",c:"Komunikácia"},
+{w:"das Formular",tr:"formulár",l:"A2",c:"Komunikácia"},{w:"der Antrag",tr:"žiadosť",l:"A2",c:"Komunikácia"},
+{w:"der Termin",tr:"termín / stretnutie",l:"A2",c:"Komunikácia"},{w:"die Verabredung",tr:"dohodnuté stretnutie",l:"A2",c:"Komunikácia"},
+// JEDLO - ĎALŠIE
+{w:"die Portion",tr:"porcia",l:"A2",c:"Jedlo"},{w:"die Zutaten",tr:"ingrediencie",l:"A2",c:"Jedlo"},
+{w:"das Rezept",tr:"recept",l:"A2",c:"Jedlo"},{w:"die Vorspeise",tr:"predjedlo",l:"A2",c:"Jedlo"},
+{w:"der Nachtisch",tr:"dezert",l:"A2",c:"Jedlo"},{w:"die Hauptspeise",tr:"hlavné jedlo",l:"A2",c:"Jedlo"},
+{w:"der Kellner",tr:"čašník",l:"A2",c:"Jedlo"},{w:"die Kellnerin",tr:"čašníčka",l:"A2",c:"Jedlo"},
+{w:"das Trinkgeld",tr:"prepitné",l:"A2",c:"Jedlo"},{w:"die Tasse",tr:"šálka",l:"A1",c:"Jedlo"},
+{w:"das Glas",tr:"pohár / sklo",l:"A1",c:"Jedlo"},{w:"der Teller",tr:"tanier",l:"A1",c:"Jedlo"},
+{w:"die Gabel",tr:"vidlička",l:"A1",c:"Jedlo"},{w:"das Messer",tr:"nôž",l:"A1",c:"Jedlo"},
+{w:"der Löffel",tr:"lyžica",l:"A1",c:"Jedlo"},{w:"die Serviette",tr:"obrúsok",l:"A2",c:"Jedlo"},
+// BÝVANIE - ĎALŠIE
+{w:"die Miete",tr:"nájom",l:"A2",c:"Bývanie"},{w:"der Mieter",tr:"nájomník",l:"A2",c:"Bývanie"},
+{w:"der Vermieter",tr:"prenajímateľ",l:"A2",c:"Bývanie"},{w:"der Mietvertrag",tr:"nájomná zmluva",l:"A2",c:"Bývanie"},
+{w:"die Nebenkosten",tr:"vedľajšie náklady",l:"A2",c:"Bývanie"},{w:"der Strom",tr:"elektrina",l:"A2",c:"Bývanie"},
+{w:"das Gas",tr:"plyn",l:"A2",c:"Bývanie"},{w:"das Wasser",tr:"voda",l:"A1",c:"Bývanie"},
+{w:"die Heizung",tr:"kúrenie",l:"A2",c:"Bývanie"},{w:"der Müll",tr:"smeti / odpad",l:"A2",c:"Bývanie"},
+,
+// ZDRAVIE - ĎALŠIE
+{w:"der Blutdruck",tr:"krvný tlak",l:"A2",c:"Zdravie"},{w:"die Operation",tr:"operácia",l:"A2",c:"Zdravie"},
+{w:"der Verband",tr:"obväz",l:"A2",c:"Zdravie"},{w:"das Pflaster",tr:"náplasť",l:"A2",c:"Zdravie"},
+{w:"die Spritze",tr:"injekcia / striekačka",l:"A2",c:"Zdravie"},{w:"die Erkältung",tr:"nachladnutie",l:"A2",c:"Zdravie"},
+{w:"der Durchfall",tr:"hnačka",l:"A2",c:"Zdravie"},{w:"das Kopfweh",tr:"bolesť hlavy",l:"A2",c:"Zdravie"},
+{w:"der Bauchschmerz",tr:"bolesť brucha",l:"A2",c:"Zdravie"},{w:"das Krankenhaus",tr:"nemocnica",l:"A1",c:"Zdravie"},
+{w:"die Notaufnahme",tr:"pohotovosť",l:"A2",c:"Zdravie"},{w:"der Krankenwagen",tr:"sanitka",l:"A2",c:"Zdravie"},
+// NAKUPOVANIE - ĎALŠIE
+{w:"die Größe",tr:"veľkosť",l:"A1",c:"Nákupy"},{w:"die Farbe",tr:"farba",l:"A1",c:"Nákupy"},
+{w:"das Sonderangebot",tr:"špeciálna ponuka",l:"A2",c:"Nákupy"},{w:"die Öffnungszeiten",tr:"otváracie hodiny",l:"A2",c:"Nákupy"},
+{w:"die Kasse",tr:"pokladňa",l:"A1",c:"Nákupy"},{w:"der Kassenbon",tr:"pokladničný blok",l:"A2",c:"Nákupy"},
+{w:"die Tüte",tr:"taška / vrecko",l:"A2",c:"Nákupy"},{w:"der Einkaufswagen",tr:"nákupný vozík",l:"A2",c:"Nákupy"},
+{w:"das Regal",tr:"regál",l:"A2",c:"Nákupy"},{w:"umtauschen",tr:"vymeniť (tovar)",l:"A2",c:"Nákupy"},
+// PRÍRODA - ĎALŠIE
+{w:"die Pflanze",tr:"rastlina",l:"A1",c:"Príroda"},{w:"das Gras",tr:"tráva",l:"A1",c:"Príroda"},
+{w:"der Fisch",tr:"ryba",l:"A1",c:"Príroda"},{w:"das Insekt",tr:"hmyz",l:"A2",c:"Príroda"},
+{w:"die Biene",tr:"včela",l:"A2",c:"Príroda"},{w:"der Schmetterling",tr:"motýľ",l:"A2",c:"Príroda"},
+{w:"der Strand",tr:"pláž",l:"A2",c:"Príroda"},{w:"die Küste",tr:"pobrežie",l:"A2",c:"Príroda"},
+{w:"das Tal",tr:"údolie",l:"A2",c:"Príroda"},{w:"der Hügel",tr:"kopec",l:"A2",c:"Príroda"},
+{w:"der Stein",tr:"kameň",l:"A2",c:"Príroda"},{w:"der Sand",tr:"piesok",l:"A2",c:"Príroda"},
+{w:"die Erde",tr:"zem / pôda",l:"A2",c:"Príroda"},{w:"das Feuer",tr:"oheň",l:"A2",c:"Príroda"},
+{w:"das Eis",tr:"ľad / zmrzlina",l:"A1",c:"Príroda"},{w:"der Regen",tr:"dážď",l:"A1",c:"Príroda"},
+// ŠKOLA - ĎALŠIE
+{w:"der Stundenplan",tr:"rozvrh hodín",l:"A2",c:"Škola"},{w:"die Pause",tr:"prestávka",l:"A1",c:"Škola"},
+{w:"das Fach",tr:"predmet",l:"A2",c:"Škola"},{w:"die Mathematik",tr:"matematika",l:"A1",c:"Škola"},
+{w:"die Biologie",tr:"biológia",l:"A2",c:"Škola"},{w:"die Geschichte",tr:"história",l:"A2",c:"Škola"},
+{w:"die Geografie",tr:"zemepis",l:"A2",c:"Škola"},{w:"die Chemie",tr:"chémia",l:"A2",c:"Škola"},
+{w:"die Physik",tr:"fyzika",l:"A2",c:"Škola"},{w:"die Kunst",tr:"umenie / výtvarná",l:"A2",c:"Škola"},
+{w:"die Musik",tr:"hudba / hudobná",l:"A1",c:"Škola"},{w:"der Sport",tr:"telesná / šport",l:"A1",c:"Škola"},
+{w:"das Abitur",tr:"maturita",l:"A2",c:"Škola"},{w:"die Ausbildung",tr:"odborné vzdelanie",l:"A2",c:"Škola"},
+// DOPRAVA - ĎALŠIE
+{w:"die Geschwindigkeit",tr:"rýchlosť",l:"A2",c:"Doprava"},{w:"der Unfall",tr:"nehoda",l:"A2",c:"Doprava"},
+{w:"der Stau",tr:"dopravná zápcha",l:"A2",c:"Doprava"},{w:"der Umweg",tr:"objazd / okľuka",l:"A2",c:"Doprava"},
+{w:"die Abfahrt",tr:"odchod (vlak/bus)",l:"A2",c:"Doprava"},{w:"die Ankunft",tr:"príchod",l:"A2",c:"Doprava"},
+{w:"der Gleis",tr:"koľaj / nástupište",l:"A2",c:"Doprava"},{w:"die Verspätung",tr:"meškanie",l:"A2",c:"Doprava"},
+{w:"das Gepäck",tr:"batožina",l:"A2",c:"Doprava"},{w:"der Koffer",tr:"kufor",l:"A2",c:"Doprava"},
+{w:"der Rucksack",tr:"ruksak",l:"A2",c:"Doprava"},{w:"die Fahrkarte",tr:"cestovný lístok",l:"A1",c:"Doprava"},
+// VOĽNÝ ČAS - ĎALŠIE
+{w:"das Instrument",tr:"nástroj / hudobný nástroj",l:"A2",c:"Voľný čas"},{w:"das Gitarre",tr:"gitara",l:"A2",c:"Voľný čas"},
+{w:"das Klavier",tr:"klavír",l:"A2",c:"Voľný čas"},{w:"der Ausflug",tr:"výlet",l:"A2",c:"Voľný čas"},
+{w:"die Veranstaltung",tr:"podujatie",l:"A2",c:"Voľný čas"},{w:"das Ticket",tr:"vstupenka / lístok",l:"A2",c:"Voľný čas"},
+{w:"die Eintrittskarte",tr:"vstupenka",l:"A2",c:"Voľný čas"},{w:"die Ausstellung",tr:"výstava",l:"A2",c:"Voľný čas"},
+{w:"der Verein",tr:"klub / spolok",l:"A2",c:"Voľný čas"},{w:"das Training",tr:"tréning",l:"A2",c:"Voľný čas"},
+{w:"das Turnier",tr:"turnaj",l:"A2",c:"Voľný čas"},{w:"der Wettkampf",tr:"súťaž",l:"A2",c:"Voľný čas"},
+// PRÁCA - ĎALŠIE
+{w:"die Besprechung",tr:"porada",l:"A2",c:"Práca"},{w:"der Termin",tr:"termín / stretnutie",l:"A2",c:"Práca"},
+{w:"das Projekt",tr:"projekt",l:"A2",c:"Práca"},{w:"die Aufgabe",tr:"úloha",l:"A2",c:"Práca"},
+{w:"der Vertrag",tr:"zmluva",l:"A2",c:"Práca"},{w:"die Bewerbung",tr:"žiadosť o prácu",l:"A2",c:"Práca"},
+{w:"der Lebenslauf",tr:"životopis",l:"A2",c:"Práca"},{w:"das Vorstellungsgespräch",tr:"pracovný pohovor",l:"A2",c:"Práca"},
+{w:"der Urlaub",tr:"dovolenka",l:"A2",c:"Práca"},{w:"die Überstunden",tr:"nadčasy",l:"A2",c:"Práca"},
+{w:"der Feierabend",tr:"koniec práce",l:"A2",c:"Práca"},{w:"die Pause",tr:"prestávka",l:"A1",c:"Práca"},
 ];
 
-let allWords = [];
-let deck = [];
-let currentIdx = 0;
-let flipped = false;
-let goodIds = new Set();
-let badIds = new Set();
-let seenIds = new Set();
-let catStatus = {};
+W.forEach((item, i) => item.id = i);
 
-function getArtClass(w) {
-  if (!w) return "";
-  const lw = w.toLowerCase();
-  if (lw.startsWith("der ")) return "art-der";
-  if (lw.startsWith("die ")) return "art-die";
-  if (lw.startsWith("das ")) return "art-das";
+const cats = [...new Set(W.map(x => x.c))];
+const selCat = document.getElementById("selCat");
+cats.forEach(c => { const o = document.createElement("option"); o.value = c; o.textContent = c; selCat.appendChild(o); });
+
+let deck = [], cur = 0, isPlaying = false, stopFlag = false;
+let voices = [];
+
+function loadVoices() {
+  voices = window.speechSynthesis.getVoices();
+  // prefer German voice
+}
+window.speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+function getVoice(lang) {
+  const all = window.speechSynthesis.getVoices();
+  return all.find(v => v.lang.startsWith(lang) && v.localService) ||
+         all.find(v => v.lang.startsWith(lang)) || null;
+}
+
+function artLabel(w) {
+  const l = w.toLowerCase();
+  if (l.startsWith("der ")) return "der";
+  if (l.startsWith("die ")) return "die";
+  if (l.startsWith("das ")) return "das";
   return "";
 }
-function getArtLabel(w) {
-  if (!w) return "";
-  const lw = w.toLowerCase();
-  if (lw.startsWith("der ")) return "der";
-  if (lw.startsWith("die ")) return "die";
-  if (lw.startsWith("das ")) return "das";
-  return "";
+function artClass(w) {
+  const a = artLabel(w);
+  return a ? "art-" + a : "art-none";
 }
-function getWordPart(w) {
-  if (!w) return w;
+function wordPart(w) {
   return /^(der|die|das) /i.test(w) ? w.substring(4) : w;
 }
 
-function renderCatPills() {
-  const container = document.getElementById("catPills");
-  container.innerHTML = "";
-  CATS.forEach(c => {
-    const pill = document.createElement("button");
-    pill.className = "cat-pill" + (catStatus[c.id] === "done" ? " done" : catStatus[c.id] === "loading" ? " loading" : "");
-    pill.textContent = (catStatus[c.id] === "done" ? "✓ " : catStatus[c.id] === "loading" ? "⏳ " : "") + c.label;
-    pill.addEventListener("click", () => loadCat(c));
-    container.appendChild(pill);
+function buildDeck() {
+  const lvl = document.getElementById("selLvl").value;
+  const cat = document.getElementById("selCat").value;
+  deck = W.filter(w => (lvl === "all" || w.l === lvl) && (cat === "all" || w.c === cat));
+  cur = 0;
+  document.getElementById("subLabel").textContent = "A1 + A2 · " + deck.length + " slovíčok";
+  document.getElementById("progTot").textContent = "/ " + deck.length;
+  renderMiniList();
+  showWord(cur, false);
+}
+
+function showWord(i, showTr) {
+  if (!deck.length) return;
+  const item = deck[i];
+  const art = artLabel(item.w);
+  const wp = wordPart(item.w);
+
+  document.getElementById("dispArt").textContent = art;
+  document.getElementById("dispArt").className = "article-display " + artClass(item.w);
+  document.getElementById("dispWord").textContent = wp;
+  document.getElementById("dispCat").textContent = item.c;
+  const lvlEl = document.getElementById("dispLvl");
+  lvlEl.textContent = item.l;
+  lvlEl.className = "lvl-badge " + (item.l === "A1" ? "a1b" : "a2b");
+
+  document.getElementById("dispTr").textContent = showTr ? item.tr : "...";
+  document.getElementById("dispTr").className = "tr-display" + (showTr ? " visible" : "");
+
+  document.getElementById("progFill").style.width = (deck.length ? ((i + 1) / deck.length * 100) : 0) + "%";
+  document.getElementById("progCur").textContent = i + 1;
+
+  updateMiniList(i);
+}
+
+function renderMiniList() {
+  const list = document.getElementById("miniList");
+  list.innerHTML = "";
+  deck.forEach((item, i) => {
+    const p = document.createElement("div");
+    p.className = "mini-pill" + (i === cur ? " current" : "");
+    p.textContent = wordPart(item.w);
+    p.addEventListener("click", () => { cur = i; showWord(cur, false); if (isPlaying) { stopFlag = true; setTimeout(() => { stopFlag = false; playFrom(cur); }, 200); } });
+    list.appendChild(p);
   });
 }
 
-async function loadCat(cat) {
-  if (catStatus[cat.id] === "loading" || catStatus[cat.id] === "done") return;
-  catStatus[cat.id] = "loading";
-  renderCatPills();
-  document.getElementById("progLabel").textContent = "Generujem: " + cat.label + "...";
+function updateMiniList(i) {
+  const pills = document.querySelectorAll(".mini-pill");
+  pills.forEach((p, j) => {
+    p.classList.toggle("current", j === i);
+    if (j < i) p.classList.add("played"); else p.classList.remove("played");
+  });
+  // scroll into view
+  if (pills[i]) pills[i].scrollIntoView({ block: "nearest", inline: "center" });
+}
 
-  const sys = `Si expert na nemčinu. Vygeneruj kompletný zoznam slovíčok pre danú tematickú skupinu na úrovniach A1 a A2 podľa CEFR.
-Vráť VÝHRADNE JSON pole bez akéhokoľvek iného textu, bez markdown, bez backtick.
-Každý objekt má polia:
-- "w": nemecké slovo (podstatné mená VŽDY s členom: der/die/das, napr. "der Hund"; slovesá v infinitíve; ostatné bez člena)
-- "tr": slovenský preklad (stručný, 1-4 slová)
-- "lvl": "A1" alebo "A2"
-Zahrň min. 70, ideálne 90-120 slov. Žiadne duplikáty.`;
+// SPEECH
+function speak(text, lang, rate, pitch) {
+  return new Promise(resolve => {
+    if (stopFlag) { resolve(); return; }
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = rate;
+    u.pitch = pitch || 1;
+    const v = getVoice(lang === "de-DE" ? "de" : "sk");
+    if (v) u.voice = v;
+    u.onend = resolve;
+    u.onerror = resolve;
+    document.getElementById("speakBar").classList.add("active");
+    window.speechSynthesis.speak(u);
+  });
+}
 
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        system: sys,
-        messages: [{ role: "user", content: "Kategória: " + cat.prompt }]
-      })
-    });
-    const data = await res.json();
-    const txt = data.content.map(i => i.text || "").join("").trim().replace(/```json|```/g, "").trim();
-    let words = JSON.parse(txt);
-    words = words.map((w, i) => ({ ...w, cat: cat.label, id: cat.id + "_" + i }));
-    allWords = [...allWords, ...words];
-    catStatus[cat.id] = "done";
-    document.getElementById("progLabel").textContent = "✓ " + cat.label + " (" + words.length + " slov)";
-  } catch (e) {
-    catStatus[cat.id] = "idle";
-    document.getElementById("progLabel").textContent = "Chyba: " + cat.label + " — skús znova";
+function delay(ms) {
+  return new Promise(resolve => {
+    if (stopFlag) { resolve(); return; }
+    setTimeout(resolve, ms);
+  });
+}
+
+async function playWord(item) {
+  if (stopFlag) return;
+  const art = artLabel(item.w);
+  const wp = wordPart(item.w);
+  const speed = parseFloat(document.getElementById("slSpeed").value);
+  const artSpeed = parseFloat(document.getElementById("slArticle").value);
+  const transDelay = parseFloat(document.getElementById("slTransDelay").value) * 1000;
+
+  showWord(cur, false);
+
+  // 1. Speak article slowly and with emphasis
+  if (art) {
+    await speak(art, "de-DE", artSpeed, 0.8);
+    await delay(120);
   }
-  renderCatPills();
-  updateProgress();
-  rebuildDeck();
-}
 
-function updateProgress() {
-  const done = Object.values(catStatus).filter(v => v === "done").length;
-  const pct = Math.round(done / CATS.length * 100);
-  document.getElementById("progFill").style.width = pct + "%";
-}
+  // 2. Speak the word at normal speed
+  await speak(wp, "de-DE", speed, 1.0);
+  await delay(300);
 
-async function loadAll() {
-  const btn = document.getElementById("btnLoadAll");
-  btn.disabled = true;
-  btn.textContent = "Načítavam...";
-  for (const cat of CATS) {
-    if (catStatus[cat.id] !== "done") {
-      await loadCat(cat);
-      await new Promise(r => setTimeout(r, 350));
-    }
+  // 3. Repeat full word with article at normal speed
+  if (art) {
+    await speak(item.w, "de-DE", speed * 0.95, 1.0);
   }
-  btn.textContent = "✓ Načítané";
+
+  // 4. Show translation after delay
+  await delay(transDelay);
+  if (stopFlag) return;
+  showWord(cur, true);
+
+  // 5. Speak Slovak translation
+  await speak(item.tr, "sk-SK", speed * 0.95, 1.0);
+  document.getElementById("speakBar").classList.remove("active");
 }
 
-function rebuildDeck() {
-  const lvl = document.getElementById("selLvl").value;
-  const mode = document.getElementById("selMode").value;
-  let source = allWords;
-  if (lvl !== "all") source = source.filter(w => w.lvl === lvl);
-  if (mode === "wrong") source = source.filter(w => badIds.has(w.id));
-  else if (mode === "unseen") source = source.filter(w => !seenIds.has(w.id));
-  deck = shuffle([...source]);
-  currentIdx = 0;
-  flipped = false;
-  document.getElementById("doneScreen").classList.remove("visible");
-  showCard();
-  updateStats();
-}
+async function playFrom(startIdx) {
+  stopFlag = false;
+  isPlaying = true;
+  document.getElementById("btnPlay").textContent = "⏸";
 
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  for (let i = startIdx; i < deck.length; i++) {
+    if (stopFlag) break;
+    cur = i;
+    await playWord(deck[i]);
+    if (stopFlag) break;
+    const pauseMs = parseFloat(document.getElementById("slPause").value) * 1000;
+    await delay(pauseMs);
   }
-  return arr;
-}
 
-function showCard() {
-  if (deck.length === 0) {
-    document.getElementById("fWord").textContent = "Načítaj slovíčka";
-    document.getElementById("fArt").textContent = "";
-    document.getElementById("fCat").textContent = "—";
-    document.getElementById("cardCounter").textContent = "0 / 0";
-    return;
+  if (!stopFlag) {
+    // reached end
+    document.getElementById("btnPlay").textContent = "▶";
+    isPlaying = false;
   }
-  if (currentIdx >= deck.length) { showDone(); return; }
-
-  const item = deck[currentIdx];
-  seenIds.add(item.id);
-
-  // front
-  const art = getArtLabel(item.w);
-  const wp = getWordPart(item.w);
-  const artEl = document.getElementById("fArt");
-  artEl.textContent = art;
-  artEl.className = "card-article " + getArtClass(item.w);
-  document.getElementById("fWord").textContent = wp;
-  document.getElementById("fCat").textContent = item.cat || "";
-  const lvlEl = document.getElementById("fLvl");
-  lvlEl.textContent = item.lvl || "";
-  lvlEl.className = "card-level " + (item.lvl === "A1" ? "a1-badge" : "a2-badge");
-
-  // back
-  document.getElementById("bTr").textContent = item.tr || "";
-  document.getElementById("bWord").textContent = item.w || "";
-
-  // reset flip
-  flipped = false;
-  document.getElementById("card3d").classList.remove("flipped");
-  document.getElementById("actionRow").classList.add("hidden");
-  document.getElementById("flipHint").textContent = "ťukni na kartičku pre preklad";
-  document.getElementById("cardCounter").textContent = (currentIdx + 1) + " / " + deck.length;
 }
 
-function flipCard() {
-  flipped = !flipped;
-  document.getElementById("card3d").classList.toggle("flipped", flipped);
-  if (flipped) {
-    document.getElementById("actionRow").classList.remove("hidden");
-    document.getElementById("flipHint").textContent = "Vedel/a si to?";
-    speakCurrent();
+function togglePlay() {
+  if (isPlaying) {
+    stopFlag = true;
+    isPlaying = false;
+    window.speechSynthesis.cancel();
+    document.getElementById("btnPlay").textContent = "▶";
+    document.getElementById("speakBar").classList.remove("active");
   } else {
-    document.getElementById("actionRow").classList.add("hidden");
-    document.getElementById("flipHint").textContent = "ťukni na kartičku pre preklad";
+    playFrom(cur);
   }
 }
 
-function markGood() {
-  const item = deck[currentIdx];
-  if (item) { goodIds.add(item.id); badIds.delete(item.id); }
-  updateStats();
-  nextCard();
-}
-function markBad() {
-  const item = deck[currentIdx];
-  if (item) { badIds.add(item.id); goodIds.delete(item.id); }
-  updateStats();
-  nextCard();
-}
-function nextCard() {
-  currentIdx++;
-  if (currentIdx >= deck.length) { showDone(); return; }
-  showCard();
-}
-function prevCard() {
-  if (currentIdx > 0) { currentIdx--; showCard(); }
-}
-
-function updateStats() {
-  document.getElementById("stTotal").textContent = allWords.length;
-  document.getElementById("stGood").textContent = goodIds.size;
-  document.getElementById("stBad").textContent = badIds.size;
-}
-
-function showDone() {
-  document.getElementById("doneScreen").classList.add("visible");
-  document.getElementById("dGood").textContent = goodIds.size;
-  document.getElementById("dBad").textContent = badIds.size;
-  const pct = deck.length > 0 ? Math.round(goodIds.size / deck.length * 100) : 0;
-  document.getElementById("doneSub").textContent =
-    "Správne: " + goodIds.size + " z " + deck.length + " (" + pct + "%)";
-}
-
-function speakCurrent() {
-  if (!window.speechSynthesis || !deck[currentIdx]) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(deck[currentIdx].w);
-  u.lang = "de-DE";
-  u.rate = 0.9;
-  speechSynthesis.speak(u);
-}
-
-// Events
-document.getElementById("scene").addEventListener("click", flipCard);
-document.getElementById("btnGood").addEventListener("click", markGood);
-document.getElementById("btnBad").addEventListener("click", markBad);
-document.getElementById("btnSkip").addEventListener("click", () => { currentIdx++; if (currentIdx >= deck.length) showDone(); else showCard(); });
-document.getElementById("btnNext").addEventListener("click", () => { if (!flipped) { flipCard(); } else { nextCard(); } });
-document.getElementById("btnPrev").addEventListener("click", prevCard);
-document.getElementById("btnAudio").addEventListener("click", speakCurrent);
-document.getElementById("btnLoadAll").addEventListener("click", loadAll);
-document.getElementById("btnRestart").addEventListener("click", () => { goodIds.clear(); badIds.clear(); seenIds.clear(); rebuildDeck(); });
-document.getElementById("btnRepeatWrong").addEventListener("click", () => {
-  document.getElementById("selMode").value = "wrong";
-  goodIds.clear();
-  rebuildDeck();
+// Controls
+document.getElementById("btnPlay").addEventListener("click", togglePlay);
+document.getElementById("btnNext").addEventListener("click", () => {
+  stopFlag = true; window.speechSynthesis.cancel();
+  setTimeout(() => { cur = Math.min(cur + 1, deck.length - 1); stopFlag = false; if (isPlaying) playFrom(cur); else showWord(cur, false); }, 150);
 });
-document.getElementById("selLvl").addEventListener("change", rebuildDeck);
-document.getElementById("selMode").addEventListener("change", rebuildDeck);
+document.getElementById("btnPrev").addEventListener("click", () => {
+  stopFlag = true; window.speechSynthesis.cancel();
+  setTimeout(() => { cur = Math.max(cur - 1, 0); stopFlag = false; if (isPlaying) playFrom(cur); else showWord(cur, false); }, 150);
+});
+document.getElementById("btnFwd").addEventListener("click", () => {
+  stopFlag = true; window.speechSynthesis.cancel();
+  setTimeout(() => { cur = Math.min(cur + 10, deck.length - 1); stopFlag = false; if (isPlaying) playFrom(cur); else showWord(cur, false); }, 150);
+});
+document.getElementById("btnRewind").addEventListener("click", () => {
+  stopFlag = true; window.speechSynthesis.cancel();
+  setTimeout(() => { cur = Math.max(cur - 10, 0); stopFlag = false; if (isPlaying) playFrom(cur); else showWord(cur, false); }, 150);
+});
 
-// Swipe
-let touchStartX = 0;
-document.getElementById("scene").addEventListener("touchstart", e => { touchStartX = e.touches[0].clientX; }, {passive: true});
-document.getElementById("scene").addEventListener("touchend", e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 60) {
-    if (dx > 0) prevCard();
-    else { if (!flipped) flipCard(); else nextCard(); }
-  }
-}, {passive: true});
+// Sliders
+document.getElementById("slSpeed").addEventListener("input", e => {
+  document.getElementById("valSpeed").textContent = parseFloat(e.target.value).toFixed(2) + "×";
+});
+document.getElementById("slArticle").addEventListener("input", e => {
+  document.getElementById("valArticle").textContent = parseFloat(e.target.value).toFixed(2) + "×";
+});
+document.getElementById("slPause").addEventListener("input", e => {
+  document.getElementById("valPause").textContent = parseFloat(e.target.value).toFixed(1) + "s";
+});
+document.getElementById("slTransDelay").addEventListener("input", e => {
+  document.getElementById("valTransDelay").textContent = parseFloat(e.target.value).toFixed(1) + "s";
+});
+
+document.getElementById("selLvl").addEventListener("change", () => { stopFlag = true; window.speechSynthesis.cancel(); isPlaying = false; document.getElementById("btnPlay").textContent = "▶"; buildDeck(); });
+document.getElementById("selCat").addEventListener("change", () => { stopFlag = true; window.speechSynthesis.cancel(); isPlaying = false; document.getElementById("btnPlay").textContent = "▶"; buildDeck(); });
 
 // Keyboard
 document.addEventListener("keydown", e => {
-  if (e.key === " " || e.key === "Enter") { e.preventDefault(); flipCard(); }
-  if (e.key === "ArrowRight") { if (!flipped) flipCard(); else nextCard(); }
-  if (e.key === "ArrowLeft") prevCard();
-  if (e.key === "g" || e.key === "1") markGood();
-  if (e.key === "b" || e.key === "2") markBad();
+  if (e.key === " ") { e.preventDefault(); togglePlay(); }
+  if (e.key === "ArrowRight") document.getElementById("btnNext").click();
+  if (e.key === "ArrowLeft") document.getElementById("btnPrev").click();
 });
 
-renderCatPills();
-showCard();
+buildDeck();
 </script>
 </body>
 </html>
